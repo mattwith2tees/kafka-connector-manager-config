@@ -1,0 +1,17 @@
+{
+    "appName": "mc-data-platform-mc-gcp-to-ieb",
+    "outputTypes": ["json"],
+    "profilesSequence": [
+        "environment"
+    ],
+    "sigVersions": ["V2"],
+    "profiles": [{
+            "id": "environment",
+            "descriptions": [
+                "qal",
+                "e2e",
+                "stg",
+                "prd"
+            ]
+    }]
+}
