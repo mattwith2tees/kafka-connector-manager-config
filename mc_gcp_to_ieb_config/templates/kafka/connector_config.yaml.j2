@@ -3,6 +3,11 @@ level_0: {{ level_0 }}
 level_1: {{ level_1 }}
 entity_version: {{ entity_version }}
 kafka_topic: {{ kafka_topic }}
+{% if pub_sub_topic %}
 pub_sub_topic: {{ pub_sub_topic }}
+{% endif %}
+{% if pub_sub_subscription %}
+pub_sub_subscription: {{ pub_sub_subscription }}
+{% endif %}
 max_tasks: {{ max_tasks }}
 schemas_enable: {{ schemas_enable | lower }}

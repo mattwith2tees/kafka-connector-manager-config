@@ -1,9 +1,11 @@
 import yaml
 import os
 
-from utils.jinja import render_template
+from pathlib import Path
+from mc_gcp_to_ieb_config.utils.jinja import render_template
+from mc_gcp_to_ieb_config.utils.util import get_variant
 
-KAFKA_CONNECTORS_DIR = "/<path/to/mc-gcp-to-ieb/repo>/app/mc_gcp_to_ieb/configs/{environment}/{direction}-{variant}/"
+KAFKA_CONNECTORS_DIR = "/Users/mturner14/Documents/git/mc-gcp-to-ieb/app/mc_gcp_to_ieb/configs/{environment}/{direction}-{variant}/"
 KAFKA_CONNECTORS_FILE = "connectors.yaml"
 
 
@@ -17,15 +19,30 @@ def kafka_config_exists(
     return False
 
 
-def render_kafka_config(stream):
+def render_kafka_config(stream, direction: str, swimlane: str):
+    is_ingest = direction == "ingest"
+
     kafka_context = {
         "kafka_topic_entity_name": stream["kafka_topic_entity_name"],
         "level_0": stream["level_0"],
         "level_1": stream["level_1"],
         "entity_version": stream["entity_version"],
-        "pub_sub_topic": stream.get(
-            "pub_sub_topic",
-            f"{stream['direction']}-{stream['swimlane']}-{stream['level_0']}_{stream['level_1']}_{stream['kafka_topic_entity_name']}_{stream['entity_version']}",
+        "kafka_topic": stream["kafka_topic"],
+        "pub_sub_topic": (
+            stream.get(
+                "pub_sub_topic",
+                f"{direction}-{swimlane}-{stream['level_0']}_{stream['level_1']}_{stream['kafka_topic_entity_name']}_{stream['entity_version']}",
+            )
+            if is_ingest
+            else None
+        ),
+        "pub_sub_subscription": (
+            stream.get(
+                "pub_sub_subscription",
+                f"{direction}-{swimlane}-{stream['level_0']}_{stream['level_1']}_{stream['kafka_topic_entity_name']}_{stream['entity_version']}-to-kafka",
+            )
+            if not is_ingest
+            else None
         ),
         "max_tasks": stream["max_tasks"],
         "schemas_enable": stream["schemas_enable"],
@@ -34,13 +51,13 @@ def render_kafka_config(stream):
     return yaml.safe_load(render_template(kafka_context, "connector_config.yaml.j2"))
 
 
-def append_config(stream):
-    config = render_kafka_config(stream)
+def append_config(stream, direction: str, swimlane: str, environment: str):
+    config = render_kafka_config(stream, direction, swimlane)
+
+    variant = get_variant(swimlane=swimlane)
 
     kafka_dir = KAFKA_CONNECTORS_DIR.format(
-        environment=stream["environment"],
-        direction=stream["direction"],
-        variant=stream["variant"],
+        environment=environment, direction=direction, variant=variant
     )
     connector_path = os.path.join(kafka_dir, KAFKA_CONNECTORS_FILE)
 
@@ -68,5 +85,31 @@ def append_config(stream):
         print(f"No new Kafka Connector configs found")
 
 
-def kafka_sync():
-    return
+def kafka_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
+    base = Path(base_path)
+
+    for swimlane_dir in base.iterdir():
+        if swimlane_dir.is_dir():
+            for env_dir in swimlane_dir.iterdir():
+                if env_dir.is_dir():
+                    for direction in ["ingest", "publish"]:
+                        config_file = env_dir / f"{direction}.yaml"
+                        if config_file.exists():
+                            try:
+                                with open(config_file, "r") as f:
+                                    config = yaml.safe_load(f) or {}
+
+                                streams = config.get("streams")
+                                if not isinstance(streams, list) or not streams:
+                                    continue
+
+                                for stream in streams:
+                                    append_config(
+                                        stream=stream,
+                                        direction=direction,
+                                        swimlane=swimlane_dir.name,
+                                        environment=env_dir.name,
+                                    )
+                            except Exception as e:
+                                print(f"Error loading {config_file}: {e}")
+                                continue

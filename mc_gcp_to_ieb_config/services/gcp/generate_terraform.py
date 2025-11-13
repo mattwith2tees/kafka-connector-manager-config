@@ -1,6 +1,9 @@
-from utils.jinja import render_template
+import yaml
 
-TERRAFORM_MODULE_FILE = "/<path/to/pantropy/repo>/terraform/data/business-intelligence/mc-domain-events/{env}/table_streams_domain_events.tf"
+from mc_gcp_to_ieb_config.utils.jinja import render_template
+from pathlib import Path
+
+TERRAFORM_MODULE_FILE = "/path/to/pantropy/terraform/data/business-intelligence/mc-domain-events/{env}/table_streams_domain_events.tf"
 
 
 def module_exists(file_path: str, module_name: str) -> bool:
@@ -14,11 +17,11 @@ def module_exists(file_path: str, module_name: str) -> bool:
         return False
 
 
-def render_terraform(stream):
+def render_terraform(stream, direction: str, swimlane: str, environment: str):
     terraform_context = {
-        "direction": stream["direction"],
-        "swimlane": stream["swimlane"],
-        "environment": stream["environment"],
+        "direction": direction,
+        "swimlane": swimlane,
+        "environment": environment,
         "kafka_topic_entity_name": stream["kafka_topic_entity_name"],
         "entity_version": stream["entity_version"],
         "level_0": stream["level_0"],
@@ -28,10 +31,10 @@ def render_terraform(stream):
     return render_template(terraform_context, "terraform_module.j2")
 
 
-def append_config(stream):
-    config = render_terraform(stream)
+def append_config(stream, direction: str, swimlane: str, environment: str):
+    config = render_terraform(stream, direction, swimlane, environment)
 
-    if stream["environment"] == "prd":
+    if environment == "prd":
         output = TERRAFORM_MODULE_FILE.format(env="prod")
     else:
         output = TERRAFORM_MODULE_FILE.format(env="staging")
@@ -46,5 +49,31 @@ def append_config(stream):
             print(f"Appended Terraform module to {output}")
 
 
-def terraform_sync():
-    return
+def terraform_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
+    base = Path(base_path)
+
+    for swimlane_dir in base.iterdir():
+        if swimlane_dir.is_dir():
+            for env_dir in swimlane_dir.iterdir():
+                if env_dir.is_dir():
+                    for direction in ["ingest", "publish"]:
+                        config_file = env_dir / f"{direction}.yaml"
+                        if config_file.exists():
+                            try:
+                                with open(config_file, "r") as f:
+                                    config = yaml.safe_load(f) or {}
+
+                                streams = config.get("streams")
+                                if not isinstance(streams, list) or not streams:
+                                    continue
+
+                                for stream in streams:
+                                    append_config(
+                                        stream=stream,
+                                        direction=direction,
+                                        swimlane=swimlane_dir.name,
+                                        environment=env_dir.name,
+                                    )
+                            except Exception as e:
+                                print(f"Error loading {config_file}: {e}")
+                                continue
