@@ -21,6 +21,7 @@ def kafka_config_exists(
 
 def render_kafka_config(stream, direction: str, swimlane: str):
     """Constructing context for Kafka jinja template."""
+    # Sink (ingest) connectors require pub_sub_topic, while Source (publish) connectors require pub_sub_subscription
     is_ingest = direction == "ingest"
 
     kafka_context = {
