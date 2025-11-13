@@ -20,6 +20,7 @@ def kafka_config_exists(
 
 
 def render_kafka_config(stream, direction: str, swimlane: str):
+    """Constructing context for Kafka jinja template."""
     is_ingest = direction == "ingest"
 
     kafka_context = {
@@ -52,6 +53,7 @@ def render_kafka_config(stream, direction: str, swimlane: str):
 
 
 def append_config(stream, direction: str, swimlane: str, environment: str):
+    """Appending new Kafka connector configs to mc-gcp-to-ieb config."""
     config = render_kafka_config(stream, direction, swimlane)
 
     variant = get_variant(swimlane=swimlane)
@@ -70,8 +72,8 @@ def append_config(stream, direction: str, swimlane: str, environment: str):
         print(f"Error reading existing config: {e}")
         raise
 
+    # unique identifiers to prevent creating duplicated connector configs
     dedupe_keys = ["name", "kafka_topic", "entity_version"]
-
     if not kafka_config_exists(existing, config, dedupe_keys):
         existing.append(config)
         try:
@@ -86,30 +88,29 @@ def append_config(stream, direction: str, swimlane: str, environment: str):
 
 
 def kafka_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
+    """Iterate through all swimlane directories and append new entries to connector configs."""
     base = Path(base_path)
 
     for swimlane_dir in base.iterdir():
-        if swimlane_dir.is_dir():
-            for env_dir in swimlane_dir.iterdir():
-                if env_dir.is_dir():
-                    for direction in ["ingest", "publish"]:
-                        config_file = env_dir / f"{direction}.yaml"
-                        if config_file.exists():
-                            try:
-                                with open(config_file, "r") as f:
-                                    config = yaml.safe_load(f) or {}
+        for env_dir in swimlane_dir.iterdir():
+            for direction in ["ingest", "publish"]:
+                config_file = env_dir / f"{direction}.yaml"
+                if config_file.exists():
+                    try:
+                        with open(config_file, "r") as f:
+                            config = yaml.safe_load(f) or {}
 
-                                streams = config.get("streams")
-                                if not isinstance(streams, list) or not streams:
-                                    continue
+                        streams = config.get("streams")
+                        if not isinstance(streams, list) or not streams:
+                            continue
 
-                                for stream in streams:
-                                    append_config(
-                                        stream=stream,
-                                        direction=direction,
-                                        swimlane=swimlane_dir.name,
-                                        environment=env_dir.name,
-                                    )
-                            except Exception as e:
-                                print(f"Error loading {config_file}: {e}")
-                                continue
+                        for stream in streams:
+                            append_config(
+                                stream=stream,
+                                direction=direction,
+                                swimlane=swimlane_dir.name,
+                                environment=env_dir.name,
+                            )
+                    except Exception as e:
+                        print(f"Error loading {config_file}: {e}")
+                        continue

@@ -18,6 +18,7 @@ def module_exists(file_path: str, module_name: str) -> bool:
 
 
 def render_terraform(stream, direction: str, swimlane: str, environment: str):
+    """Constructing context for Terraform jinja template."""
     terraform_context = {
         "direction": direction,
         "swimlane": swimlane,
@@ -32,6 +33,7 @@ def render_terraform(stream, direction: str, swimlane: str, environment: str):
 
 
 def append_config(stream, direction: str, swimlane: str, environment: str):
+    """Appending new Terrform module blocks to Pantropy."""
     config = render_terraform(stream, direction, swimlane, environment)
 
     if environment == "prd":
@@ -50,30 +52,29 @@ def append_config(stream, direction: str, swimlane: str, environment: str):
 
 
 def terraform_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
+    """Iterate through all swimlane directories and append new entries to Pantropy."""
     base = Path(base_path)
 
     for swimlane_dir in base.iterdir():
-        if swimlane_dir.is_dir():
-            for env_dir in swimlane_dir.iterdir():
-                if env_dir.is_dir():
-                    for direction in ["ingest", "publish"]:
-                        config_file = env_dir / f"{direction}.yaml"
-                        if config_file.exists():
-                            try:
-                                with open(config_file, "r") as f:
-                                    config = yaml.safe_load(f) or {}
+        for env_dir in swimlane_dir.iterdir():
+            for direction in ["ingest", "publish"]:
+                config_file = env_dir / f"{direction}.yaml"
+                if config_file.exists():
+                    try:
+                        with open(config_file, "r") as f:
+                            config = yaml.safe_load(f) or {}
 
-                                streams = config.get("streams")
-                                if not isinstance(streams, list) or not streams:
-                                    continue
+                        streams = config.get("streams")
+                        if not isinstance(streams, list) or not streams:
+                            continue
 
-                                for stream in streams:
-                                    append_config(
-                                        stream=stream,
-                                        direction=direction,
-                                        swimlane=swimlane_dir.name,
-                                        environment=env_dir.name,
-                                    )
-                            except Exception as e:
-                                print(f"Error loading {config_file}: {e}")
-                                continue
+                        for stream in streams:
+                            append_config(
+                                stream=stream,
+                                direction=direction,
+                                swimlane=swimlane_dir.name,
+                                environment=env_dir.name,
+                            )
+                    except Exception as e:
+                        print(f"Error loading {config_file}: {e}")
+                        continue

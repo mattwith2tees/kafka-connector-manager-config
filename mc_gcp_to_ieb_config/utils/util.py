@@ -1,4 +1,5 @@
 def get_variant(swimlane: str):
+    """Get mc-gcp-to-ieb variant based on Event Bus Swimlane."""
     if swimlane == "mailchimp":
         variant = "msc"
     elif swimlane == "gbsg":
