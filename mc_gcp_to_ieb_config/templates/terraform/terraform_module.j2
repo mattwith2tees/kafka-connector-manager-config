@@ -1,0 +1,12 @@
+# stream for {{ kafka_topic_entity_name }}
+module "{{ level_0 }}_{{ level_1 }}_{{ kafka_topic_entity_name }}_{{ entity_version }}__stream" {
+  source                  = "./table-stream"
+  direction               = "{{ direction }}"
+  swimlane                = "{{ swimlane }}"
+  environment             = "{{ environment }}"
+  kafka_topic_entity_name = "{{ kafka_topic_entity_name }}"
+  entity_version          = "{{ entity_version }}"
+  level_0                 = "{{ level_0 }}"
+  level_1                 = "{{ level_1 }}"
+  gcp_labels              = local.gcp_labels
+}
