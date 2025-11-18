@@ -7,6 +7,8 @@ streams:
     kafka_topic_entity_name: test-event-stream
     max_tasks: 3
     schemas_enable: true
+    materialize: true
+    iedm_schema: crmandmarketing/mailchimp/marketingandcrmanalytics/entities/Attribution.schema.json
 
     labels:                                                                          # optional labels for cost attribution and team mapping
       intuit-billing-capability: mc-data-understanding

@@ -1,4 +1,4 @@
-from mc_gcp_to_ieb_config.services.airflow.generate_bigquey_schema import (
+from mc_gcp_to_ieb_config.services.airflow.iedm_to_bigquery import (
     read_json,
     get_bigquery_fields,
     get_iedm_fields,
