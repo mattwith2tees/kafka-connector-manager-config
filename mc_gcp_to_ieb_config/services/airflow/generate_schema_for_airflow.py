@@ -12,7 +12,7 @@ from mc_gcp_to_ieb_config.services.airflow.iedm_to_bigquery import (
 BASE_PATH = "/Users/nhoffman/Projects"
 IEDM_SCHEMAJSON_FOLDER = f"{BASE_PATH}/iedm-schema/idp-artifacts/jsonschema/intuit/iedm/datamap"
 AIRFLOW_FOLDER = f"{BASE_PATH}/airflow-cloud"
-AIRFLOW_SCHEMA_ROOT = f"{BASE_PATH}/airflow-cloud/dags/core/streaming-materializer/schemas"
+AIRFLOW_SCHEMA_ROOT = f"{BASE_PATH}/airflow-cloud/dags/core/domain-event-materializer/schemas"
 
 
 def find_iedm_schema_file(path: str) -> str:
