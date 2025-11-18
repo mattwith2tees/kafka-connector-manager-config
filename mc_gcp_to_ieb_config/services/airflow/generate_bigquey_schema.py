@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 # Converts camelCase field names to snake_case.  (See: https://stackoverflow.com/a/12867228).
-CAMEL_TO_SNAKE = re.compile('((?<=[a-z0-9])[A-Z]|(?!^)[A-Z](?=[a-z]))')
+CAMEL_TO_SNAKE = re.compile("((?<=[a-z0-9])[A-Z]|(?!^)[A-Z](?=[a-z]))")
 
 # IEDM to BigQuery data type mapping.
 TYPE_MAPPINGS = {
@@ -164,6 +164,7 @@ def _get_bigquery_field_mode(iedm_field: dict) -> str:
         return "nullable"
     else:
         return "required"
+
 
 def airflow_schema_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
     """Iterate through all swimlane directories and add relevant BigQuery schemas to airflow-cloud"""

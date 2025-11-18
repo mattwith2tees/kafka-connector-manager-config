@@ -1,5 +1,7 @@
 import click
-from mc_gcp_to_ieb_config.services.airflow.generate_bigquey_schema import airflow_schema_sync
+from mc_gcp_to_ieb_config.services.airflow.generate_bigquey_schema import (
+    airflow_schema_sync,
+)
 
 
 @click.group(name="airflow")

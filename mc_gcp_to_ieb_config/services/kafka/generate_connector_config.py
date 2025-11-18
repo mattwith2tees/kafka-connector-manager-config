@@ -9,9 +9,7 @@ KAFKA_CONNECTORS_DIR = "/Users/mturner14/Documents/git/mc-gcp-to-ieb/app/mc_gcp_
 KAFKA_CONNECTORS_FILE = "connectors.yaml"
 
 
-def kafka_config_exists(
-    existing_configs: list, new_config: dict, keys: list[str]
-) -> bool:
+def kafka_config_exists(existing_configs: list, new_config: dict, keys: list[str]) -> bool:
     """Check if a Kafka Connector config already exists."""
     for config in existing_configs:
         if all(config.get(key) == new_config.get(key) for key in keys):
