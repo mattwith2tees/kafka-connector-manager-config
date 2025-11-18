@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 # Converts camelCase field names to snake_case.  (See: https://stackoverflow.com/a/12867228).
-CAMEL_TO_SNAKE = re.compile('((?<=[a-z0-9])[A-Z]|(?!^)[A-Z](?=[a-z]))')
+CAMEL_TO_SNAKE = re.compile("((?<=[a-z0-9])[A-Z]|(?!^)[A-Z](?=[a-z]))")
 
 # IEDM to BigQuery data type mapping.
 TYPE_MAPPINGS = {
@@ -65,7 +65,9 @@ def get_iedm_fields(properties: dict, definitions: dict) -> dict:
         if field["_ref"]:
             key = field["_ref"][14:]
             definition = definitions[key]
-            field["_fields"] = get_iedm_fields(definition.get("properties", {}), definitions)
+            field["_fields"] = get_iedm_fields(
+                definition.get("properties", {}), definitions
+            )
 
         fields[name] = field
 
@@ -97,7 +99,9 @@ def _find_type(field: dict) -> str:
     elif "items" in field and "type" in field["items"]:
         return field["items"]["type"]
     else:
-        raise Exception(f"Failed to determine data type for field:\n{json.dumps(field, indent=4)}")
+        raise Exception(
+            f"Failed to determine data type for field:\n{json.dumps(field, indent=4)}"
+        )
 
 
 def get_bigquery_fields(iedm_fields: dict, parent: str = "$") -> list[dict]:
@@ -137,7 +141,9 @@ def get_bigquery_fields(iedm_fields: dict, parent: str = "$") -> list[dict]:
         }
 
         if "_fields" in iedm_field:
-            bigquery_field["fields"] = get_bigquery_fields(iedm_field["_fields"], json_path)
+            bigquery_field["fields"] = get_bigquery_fields(
+                iedm_field["_fields"], json_path
+            )
 
         bigquery_fields.append(bigquery_field)
 
@@ -164,6 +170,7 @@ def _get_bigquery_field_mode(iedm_field: dict) -> str:
         return "nullable"
     else:
         return "required"
+
 
 def airflow_schema_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
     """Iterate through all swimlane directories and add relevant BigQuery schemas to airflow-cloud"""
