@@ -1,0 +1,350 @@
+{
+  "$id" : "https://schema.intuit.com/iedm/Attribution.schema.json",
+  "$schema" : "http://json-schema.org/draft-07/schema#",
+  "@base" : [ "/system/interfaces/Entity", "/system/interfaces/BaseInterface", "/sharedkernels/mailchimp/interfaces/EntityWithAccountScope" ],
+  "description" : "Entity represents attribution for various entities such as Mailchimp Orders which contains the entity event, contact and attribution details. An attribution credits the C2 marketing activity such as an email open, sms click, etc. to the entity event. Example, for last touch attribution model, C2 clicks marketing email then places an order. This leads to the C2 click being attributed to the order.",
+  "type" : "object",
+  "required" : [ "id", "account" ],
+  "urn" : "urn:intuit:crmandmarketing:mailchimp:marketingandcrmanalytics:Attribution",
+  "@domainType" : "SOURCE",
+  "@uniqueIdentifierProperties" : [ "id" ],
+  "is7216Restricted" : false,
+  "additionalProperties" : false,
+  "@intent" : "ENTITY",
+  "dataMapId" : "34cb747f-2870-f0e5-3d27-2fc39bfca226",
+  "customerOwned" : false,
+  "properties" : {
+    "id" : {
+      "@classification" : "PUBLIC",
+      "description" : "Globally-unique identifier for a resource.  New ID namespace for IEDM, multi-part encoding. ",
+      "type" : "string"
+    },
+    "alternativeIds" : {
+      "@classification" : "PUBLIC",
+      "description" : "Other ids: external, internal, relative to the current system",
+      "type" : "array",
+      "items" : {
+        "$ref" : "#/definitions/system:types:AlternateId",
+        "@intent" : "TYPE",
+        "description" : "Means of storing a namespace-controlled alternative ID for an entity"
+      }
+    },
+    "meta" : {
+      "$ref" : "#/definitions/system:types:Metadata",
+      "@classification" : "PUBLIC",
+      "@intent" : "TYPE",
+      "description" : "Contains meta-data details common to all entities in the system such as who/what/when created and/or modified the entity. All entities are required to support these fields"
+    },
+    "account" : {
+      "$ref" : "#/definitions/sharedkernels:mailchimp:types:Account",
+      "@classification" : "RESTRICTED",
+      "@intent" : "TYPE",
+      "@nullable" : false,
+      "description" : "Reference to the account associated with this entity, i.e OII (Intuit) or Mailchimp"
+    },
+    "entityVersion" : {
+      "@classification" : "RESTRICTED",
+      "description" : "Version for this entity",
+      "maximum" : 2147483647,
+      "minimum" : -2147483648,
+      "type" : "integer"
+    },
+    "entityId" : {
+      "@classification" : "RESTRICTED",
+      "@nullable" : false,
+      "@piiClassification" : "Non PII",
+      "description" : "Identifier for the entity instance to perform attribution on. This could be a Mailchimp Order ID. Future case could be QuickBooks identifier.",
+      "type" : "string"
+    },
+    "entityType" : {
+      "$ref" : "#/definitions/datamap:crmandmarketing:mailchimp:marketingandcrmanalytics:enums:EntityTypeEnum",
+      "@classification" : "SENSITIVE",
+      "@intent" : "TYPE",
+      "@nullable" : false,
+      "@piiClassification" : "Non PII",
+      "description" : "The type of entity that is being attributed. This could be MAILCHIMP_ORDER. Future case could be QuickBooks type."
+    },
+    "audienceId" : {
+      "@classification" : "SENSITIVE",
+      "@nullable" : true,
+      "@piiClassification" : "Non PII",
+      "description" : "The ID of the audience associated to the entity.",
+      "type" : [ "null", "string" ]
+    },
+    "campaignId" : {
+      "@classification" : "RESTRICTED",
+      "@nullable" : true,
+      "@piiClassification" : "Non PII",
+      "description" : "The ID of the campaign that corresponds to the attribution.",
+      "type" : [ "null", "string" ]
+    },
+    "campaignType" : {
+      "oneOf" : [ {
+        "type" : "null"
+      }, {
+        "$ref" : "#/definitions/datamap:crmandmarketing:mailchimp:enums:CampaignTypeEnum",
+        "@intent" : "TYPE",
+        "description" : "Various types of campaigns."
+      } ],
+      "description" : "The type of campaign that corresponds to the attribution. This could be REGULAR, SMS, etc.",
+      "@nullable" : true,
+      "@classification" : "SENSITIVE",
+      "@piiClassification" : "Non PII"
+    },
+    "campaignSendStartedAt" : {
+      "@classification" : "SENSITIVE",
+      "@is_local" : false,
+      "@nullable" : true,
+      "@piiClassification" : "Non PII",
+      "description" : "The time the campaign was sent at.",
+      "format" : "date-time",
+      "type" : [ "null", "string" ]
+    },
+    "type" : {
+      "oneOf" : [ {
+        "type" : "null"
+      }, {
+        "$ref" : "#/definitions/datamap:crmandmarketing:mailchimp:enums:AttributionTypeEnum",
+        "@intent" : "TYPE",
+        "description" : "Indicates the type of attribution for an event. This could come from an Ad, Campaign, landing site, etc.\n"
+      } ],
+      "description" : "The type of attribution. This could be CAMPAIGN, SMS_CAMPAIGN, etc.",
+      "@nullable" : true,
+      "@classification" : "SENSITIVE",
+      "@piiClassification" : "Non PII"
+    },
+    "homeNetRevenue" : {
+      "oneOf" : [ {
+        "type" : "null"
+      }, {
+        "$ref" : "#/definitions/golden:types:MoneyAmount",
+        "@intent" : "TYPE",
+        "description" : "Money Amount"
+      } ],
+      "description" : "Total net revenue of the order in home (C1 user's local) currency.",
+      "@nullable" : true,
+      "@classification" : "RESTRICTED"
+    },
+    "homeGrossRevenue" : {
+      "oneOf" : [ {
+        "type" : "null"
+      }, {
+        "$ref" : "#/definitions/golden:types:MoneyAmount",
+        "@intent" : "TYPE",
+        "description" : "Money Amount"
+      } ],
+      "description" : "Total gross revenue of the order in home (C1 user's local) currency.",
+      "@nullable" : true,
+      "@classification" : "RESTRICTED"
+    },
+    "contactId" : {
+      "@classification" : "RESTRICTED",
+      "@nullable" : true,
+      "description" : "The contact ID.",
+      "type" : [ "null", "string" ]
+    },
+    "processedAt" : {
+      "@classification" : "RESTRICTED",
+      "@is_local" : false,
+      "@nullable" : true,
+      "description" : "The datetime when the order was processed.",
+      "format" : "date-time",
+      "type" : [ "null", "string" ]
+    },
+    "storeId" : {
+      "@classification" : "RESTRICTED",
+      "@nullable" : false,
+      "description" : "Reference to the Ecommerce Store entity.",
+      "type" : "string"
+    }
+  },
+  "@type_name" : "com.intuit.crmandmarketing.mailchimp.marketingandcrmanalytics.Attribution",
+  "definitions" : {
+    "system:types:AlternateId" : {
+      "description" : "Means of storing a namespace-controlled alternative ID for an entity",
+      "additionalProperties" : false,
+      "type" : "object",
+      "@intent" : "TYPE",
+      "properties" : {
+        "id" : {
+          "@classification" : "PUBLIC",
+          "description" : "alternative id within the given namespace",
+          "type" : "string"
+        },
+        "nameSpace" : {
+          "@classification" : "PUBLIC",
+          "description" : "the domain that generates the ID.  Should be a registered domain name",
+          "type" : "string"
+        }
+      },
+      "@type_name" : "com.intuit.system.types.AlternateId"
+    },
+    "system:types:EntityRef" : {
+      "description" : "EntutyRef for type reference",
+      "additionalProperties" : false,
+      "type" : "object",
+      "@intent" : "TYPE",
+      "properties" : {
+        "id" : {
+          "@classification" : "PUBLIC",
+          "description" : "Globally-unique identifier for a resource.  New ID namespace for IEDM, multi-part encoding.",
+          "type" : "string"
+        }
+      },
+      "@type_name" : "com.intuit.system.types.EntityRef"
+    },
+    "system:types:Metadata" : {
+      "description" : "metadata associated with an Entity: onwer, creation, update by user and app ",
+      "additionalProperties" : false,
+      "type" : "object",
+      "@intent" : "TYPE",
+      "properties" : {
+        "owner" : {
+          "$ref" : "#/definitions/system:types:EntityRef",
+          "@classification" : "PUBLIC",
+          "@intent" : "TYPE",
+          "description" : "owner of an entity could be a company(in case of Small-business or Self-employed) OR a person (in case of Turbo-tax, Mint etc) "
+        },
+        "created" : {
+          "@classification" : "PUBLIC",
+          "@is_local" : false,
+          "description" : "Time of entity creation",
+          "format" : "date-time",
+          "type" : "string"
+        },
+        "createdByUser" : {
+          "$ref" : "#/definitions/system:types:EntityRef",
+          "@classification" : "PUBLIC",
+          "@intent" : "TYPE",
+          "description" : "The user that created the entity"
+        },
+        "updated" : {
+          "@classification" : "PUBLIC",
+          "@is_local" : false,
+          "description" : "Time of last modification",
+          "format" : "date-time",
+          "type" : "string"
+        },
+        "updatedByUser" : {
+          "$ref" : "#/definitions/system:types:EntityRef",
+          "@classification" : "PUBLIC",
+          "@intent" : "TYPE",
+          "description" : "The user that modified the entity"
+        },
+        "createdByApp" : {
+          "$ref" : "#/definitions/system:types:EntityRef",
+          "@classification" : "PUBLIC",
+          "@intent" : "TYPE",
+          "description" : "The application that created the entity, each app has a unique entity id"
+        },
+        "updatedByApp" : {
+          "$ref" : "#/definitions/system:types:EntityRef",
+          "@classification" : "PUBLIC",
+          "@intent" : "TYPE",
+          "description" : "The application that modified the entity, each app has a unique entity id"
+        },
+        "ipaddress" : {
+          "@classification" : "PUBLIC",
+          "description" : "ip of the user that made the change",
+          "type" : "string"
+        },
+        "deviceId" : {
+          "@classification" : "PUBLIC",
+          "description" : "device id of the user from which the change was made",
+          "type" : "string"
+        },
+        "userAgent" : {
+          "@classification" : "PUBLIC",
+          "description" : "user agent used for the change. e.g browser, operating systems etc",
+          "type" : "string"
+        }
+      },
+      "@type_name" : "com.intuit.system.types.Metadata"
+    },
+    "sharedkernels:mailchimp:enums:AccountProvider" : {
+      "@enum_keys" : [ "INTUIT", "MAILCHIMP", "IDX" ],
+      "description" : "Indicates the account provider for the account.",
+      "type" : "string",
+      "@intent" : "TYPE",
+      "enum" : [ "INTUIT", "MAILCHIMP", "IDX" ],
+      "@type_name" : "com.intuit.sharedkernels.mailchimp.enums.AccountProvider"
+    },
+    "sharedkernels:mailchimp:types:Account" : {
+      "description" : "Defines a type of Account which is associated with entities in the marketing sub domain",
+      "additionalProperties" : false,
+      "type" : "object",
+      "@intent" : "TYPE",
+      "properties" : {
+        "id" : {
+          "@classification" : "RESTRICTED",
+          "@nullable" : false,
+          "description" : "AccountId of the entity",
+          "type" : "string"
+        },
+        "provider" : {
+          "$ref" : "#/definitions/sharedkernels:mailchimp:enums:AccountProvider",
+          "@classification" : "RESTRICTED",
+          "@intent" : "TYPE",
+          "@nullable" : false,
+          "description" : "Provider of the account, one of INTUIT or MAILCHIMP."
+        }
+      },
+      "required" : [ "id", "provider" ],
+      "@type_name" : "com.intuit.sharedkernels.mailchimp.types.Account"
+    },
+    "datamap:crmandmarketing:mailchimp:marketingandcrmanalytics:enums:EntityTypeEnum" : {
+      "@enum_keys" : [ "MAILCHIMP_ORDER" ],
+      "description" : "Entity types such as mailchimp orders, quickbooks invoices, etc.",
+      "type" : "string",
+      "@intent" : "TYPE",
+      "enum" : [ "MAILCHIMP_ORDER" ],
+      "@type_name" : "com.intuit.crmandmarketing.mailchimp.marketingandcrmanalytics.enums.EntityTypeEnum"
+    },
+    "datamap:crmandmarketing:mailchimp:enums:CampaignTypeEnum" : {
+      "@enum_keys" : [ "ABSPLIT", "AUTOMATION_EMAIL", "AUTOMATION", "AUTORESPONDER", "EMAIL_TOUCHPOINT", "INSPECTION", "LANDING_PAGE", "PLAINTEXT", "RECONFIRM", "REGULAR", "RSS", "TRANSACTIONAL", "VARIATE_CHILD", "VARIATE", "SMS", "AUTOMATION_SMS" ],
+      "description" : "Various types of campaigns.",
+      "type" : "string",
+      "@intent" : "TYPE",
+      "enum" : [ "ABSPLIT", "AUTOMATION_EMAIL", "AUTOMATION", "AUTORESPONDER", "EMAIL_TOUCHPOINT", "INSPECTION", "LANDING_PAGE", "PLAINTEXT", "RECONFIRM", "REGULAR", "RSS", "TRANSACTIONAL", "VARIATE_CHILD", "VARIATE", "SMS", "AUTOMATION_SMS" ],
+      "@type_name" : "com.intuit.crmandmarketing.mailchimp.enums.CampaignTypeEnum"
+    },
+    "datamap:crmandmarketing:mailchimp:enums:AttributionTypeEnum" : {
+      "@enum_keys" : [ "AD_FACEBOOK", "AD_GOOGLE", "AUTOMATION", "CAMPAIGN", "PAGE", "POSTCARD", "SOCIAL_POST", "SURVEY", "WEBSITE", "SMS_CAMPAIGN", "SMS_CJB" ],
+      "description" : "Indicates the type of attribution for an event. This could come from an Ad, Campaign, landing site, etc.\n",
+      "type" : "string",
+      "@intent" : "TYPE",
+      "enum" : [ "AD_FACEBOOK", "AD_GOOGLE", "AUTOMATION", "CAMPAIGN", "PAGE", "POSTCARD", "SOCIAL_POST", "SURVEY", "WEBSITE", "SMS_CAMPAIGN", "SMS_CJB" ],
+      "@type_name" : "com.intuit.crmandmarketing.mailchimp.enums.AttributionTypeEnum"
+    },
+    "golden:enums:CurrencyEnum" : {
+      "@enum_keys" : [ "UNKNOWN", "OTHER", "USD", "GBP", "CAD", "SGD", "INR", "EUR", "MYR", "VND", "AUD", "HKD", "JPY", "KPW", "CHF", "UAH", "YER", "AED", "ARS", "AWG", "BAM", "BBD", "BDT", "BGN", "BHD", "BIF", "BMD", "BND", "BOB", "BRL", "BSD", "BTN", "BWP", "BYR", "CDF", "CLP", "CNY", "COP", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "FJD", "FKP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HNL", "HRK", "HTG", "HUF", "IDR", "ILS", "IQD", "IRR", "ISK", "JMD", "JOD", "KES", "KHR", "KMF", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LTL", "LVL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRO", "MUR", "MVR", "MWK", "MXN", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SHP", "SLL", "SOS", "STD", "SVC", "SYP", "SZL", "THB", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UGX", "UYU", "UZS", "VEF", "VUV", "WST", "XAF", "XCD", "XPF", "ZAR", "ZMK", "ZWD", "XOF", "ALL", "AOA", "AMD", "AZN", "BZD", "ANG", "TJS", "TMT", "SRD", "AFN", "ZMW", "BTC", "BYN", "CYP", "EEK", "KGS", "SKK", "LTC", "ETH", "SLE", "SSP", "VES", "XCG", "MRU" ],
+      "description" : "Currency code from international standard: https://www.iban.com/currency-codes, plus extension for crypto currencies. Added XCG since Curacao has migrated their currency from Antillean Guilder (ANG) to Carribean Guilder(XCG) effective 31st of March 2025.",
+      "type" : "string",
+      "@intent" : "TYPE",
+      "enum" : [ "UNKNOWN", "OTHER", "USD", "GBP", "CAD", "SGD", "INR", "EUR", "MYR", "VND", "AUD", "HKD", "JPY", "KPW", "CHF", "UAH", "YER", "AED", "ARS", "AWG", "BAM", "BBD", "BDT", "BGN", "BHD", "BIF", "BMD", "BND", "BOB", "BRL", "BSD", "BTN", "BWP", "BYR", "CDF", "CLP", "CNY", "COP", "CRC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "FJD", "FKP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HNL", "HRK", "HTG", "HUF", "IDR", "ILS", "IQD", "IRR", "ISK", "JMD", "JOD", "KES", "KHR", "KMF", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LTL", "LVL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRO", "MUR", "MVR", "MWK", "MXN", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SHP", "SLL", "SOS", "STD", "SVC", "SYP", "SZL", "THB", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UGX", "UYU", "UZS", "VEF", "VUV", "WST", "XAF", "XCD", "XPF", "ZAR", "ZMK", "ZWD", "XOF", "ALL", "AOA", "AMD", "AZN", "BZD", "ANG", "TJS", "TMT", "SRD", "AFN", "ZMW", "BTC", "BYN", "CYP", "EEK", "KGS", "SKK", "LTC", "ETH", "SLE", "SSP", "VES", "XCG", "MRU" ],
+      "@type_name" : "com.intuit.golden.enums.CurrencyEnum"
+    },
+    "golden:types:MoneyAmount" : {
+      "description" : "Money Amount",
+      "additionalProperties" : false,
+      "type" : "object",
+      "@intent" : "TYPE",
+      "properties" : {
+        "currency" : {
+          "$ref" : "#/definitions/golden:enums:CurrencyEnum",
+          "@classification" : "PUBLIC",
+          "@intent" : "TYPE",
+          "description" : "currency code, e.g. USD"
+        },
+        "value" : {
+          "@classification" : "PUBLIC",
+          "@semantic_type" : "amount",
+          "description" : "special decimal, with restriction on number of digits after decimal point",
+          "pattern" : "^(-?)(0|([1-9][0-9]*))(\\.[0-9]+)?$",
+          "type" : "string"
+        }
+      },
+      "@type_name" : "com.intuit.golden.types.MoneyAmount"
+    }
+  }
+}
