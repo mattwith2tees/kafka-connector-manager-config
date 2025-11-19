@@ -1,5 +1,5 @@
 import click
-from mc_gcp_to_ieb_config.services.airflow.generate_bigquey_schema import (
+from mc_gcp_to_ieb_config.services.airflow.generate_schema_for_airflow import (
     airflow_schema_sync,
 )
 

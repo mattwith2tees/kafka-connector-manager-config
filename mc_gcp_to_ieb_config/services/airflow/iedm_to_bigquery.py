@@ -164,23 +164,3 @@ def _get_bigquery_field_mode(iedm_field: dict) -> str:
         return "nullable"
     else:
         return "required"
-
-
-def airflow_schema_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
-    """Iterate through all swimlane directories and add relevant BigQuery schemas to airflow-cloud"""
-    base = Path(base_path)
-
-    for swimlane_dir in base.iterdir():
-        for env_dir in swimlane_dir.iterdir():
-            config_file = env_dir / "ingest.yaml"
-            if config_file.exists():
-                try:
-                    with open(config_file, "r") as f:
-                        config = yaml.safe_load(f) or {}
-
-                    # TODO - Pluck out the materializer part of the configs
-                    pass
-
-                except Exception as e:
-                    print(f"Error loading {config_file}: {e}")
-                    continue
