@@ -2,15 +2,23 @@ from jinja2 import Environment, FileSystemLoader
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
+TEMPLATES_DIR = ROOT_DIR / "templates"
+
+TEMPLATE_REGISTRY = {
+    "terraform_module.j2": "terraform",
+    "connector_config.yaml.j2": "kafka",
+}
 
 
-def render_template(context: dict, template: str):
-    if template == "terraform_module.j2":
-        TEMPLATE_DIR = ROOT_DIR / "templates" / "terraform"
-    else:
-        TEMPLATE_DIR = ROOT_DIR / "templates" / "kafka"
+def render_template(context: dict, template: str) -> str:
+    """Render a Jinja2 template with the given context."""
+    if template not in TEMPLATE_REGISTRY:
+        raise ValueError(
+            f"Unknown template: {template}. Expected one of: {list(TEMPLATE_REGISTRY.keys())}"
+        )
 
-    env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
+    template_subdir = TEMPLATE_REGISTRY[template]
+    template_dir = TEMPLATES_DIR / template_subdir
 
-    rendered_template = env.get_template(template)
-    return rendered_template.render(context)
+    env = Environment(loader=FileSystemLoader(template_dir))
+    return env.get_template(template).render(context)
