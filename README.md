@@ -194,6 +194,6 @@ schemas_enable: true
    python cli.py kafka sync
    ```
 5. **Commit changes** to both this repo and the generated output repos
-6. **Request approval** from the `#data-movement` team:
+6. **Request approval** from the `data-movement` (#mc-l2-data-movement?) team:
    - First, get your `Pantropy` PR approved and merged.
    - Then, request review and merge for your `mc-gcp-to-ieb` PR.
