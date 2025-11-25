@@ -1,10 +1,14 @@
-def get_variant(swimlane: str):
-    """Get mc-gcp-to-ieb variant based on Event Bus Swimlane."""
-    if swimlane == "mailchimp":
-        variant = "msc"
-    elif swimlane == "gbsg":
-        variant = "gbsc"
-    elif swimlane == "aifabric":
-        variant = "aifabric"
+SWIMLANE_TO_VARIANT = {
+    "mailchimp": "msc",
+    "gbsg": "gbsc",
+    "aifabric": "aifabric",
+}
 
-    return variant
+
+def get_variant(swimlane: str) -> str:
+    """Get mc-gcp-to-ieb variant based on Event Bus Swimlane."""
+    if swimlane not in SWIMLANE_TO_VARIANT:
+        raise ValueError(
+            f"Unknown swimlane: {swimlane}. Expected one of: {list(SWIMLANE_TO_VARIANT.keys())}"
+        )
+    return SWIMLANE_TO_VARIANT[swimlane]
