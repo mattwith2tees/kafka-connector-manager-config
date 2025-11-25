@@ -185,7 +185,7 @@ schemas_enable: true
 
 ## Adding a New Stream
 
-1. **Identify your swimlane**: `mailchimp`, `gbsg`, or `aifabric`
+1. **Identify your swimlane**: `mailchimp`, `gbsg`, or `aifabric` (more to come)
 2. **Choose the direction**: `ingest.yaml` (Kafka→BQ) or `publish.yaml` (BQ→Kafka)
 3. **Add your stream config** to the appropriate YAML file
 4. **Run the generators**:
