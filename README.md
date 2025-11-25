@@ -197,5 +197,3 @@ schemas_enable: true
 6. **Request approval** from the `#data-movement` team:
    - First, get your `Pantropy` PR approved and merged.
    - Then, request review and merge for your `mc-gcp-to-ieb` PR.
-
-
