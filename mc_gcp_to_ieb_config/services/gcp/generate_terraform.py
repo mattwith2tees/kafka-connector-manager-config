@@ -3,7 +3,7 @@ import yaml
 from mc_gcp_to_ieb_config.utils.jinja import render_template
 from pathlib import Path
 
-TERRAFORM_MODULE_FILE = "/path/to/pantropy/terraform/data/business-intelligence/mc-domain-events/{env}/table_streams_domain_events.tf"
+TERRAFORM_MODULE_FILE = "/Users/mturner14/Documents/git/pantropy/terraform/data/business-intelligence/mc-domain-events/{env}/table_streams_domain_events.tf"
 
 
 def module_exists(file_path: str, module_name: str) -> bool:
@@ -69,6 +69,10 @@ def terraform_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
                             continue
 
                         for stream in streams:
+                            if stream.get("skip_terraform_sync"):
+                                print(f"Skipping Terraform sync for {stream['name']} (skip_terraform_sync=true)")
+                                continue
+
                             append_config(
                                 stream=stream,
                                 direction=direction,

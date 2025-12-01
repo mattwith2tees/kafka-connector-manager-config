@@ -1,0 +1,19 @@
+streams:
+- name: attribution
+  kafka_topic: stg-crmandmarketing-marketingandcrmanalytics-attribution-v1
+  kafka_topic_entity_name: attribution
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: marketingandcrmanalytics
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module has non-standard name (uses hyphens)
+- name: attribution
+  kafka_topic: stg-crmandmarketing-marketingandcrmanalytics-attribution-v2
+  kafka_topic_entity_name: attribution
+  entity_version: v2
+  level_0: crmandmarketing
+  level_1: marketingandcrmanalytics
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module has non-standard name (uses hyphens)

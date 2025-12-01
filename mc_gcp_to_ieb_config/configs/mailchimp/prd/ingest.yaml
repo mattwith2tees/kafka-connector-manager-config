@@ -1,0 +1,188 @@
+streams:
+# c2profile streams - these have legacy Terraform module naming
+- name: acquired_contact
+  kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-acquired-contact-v1
+  kafka_topic_entity_name: acquired_contact
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: unifiedcontactprofiles
+  max_tasks: 12
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module: crmandmarketing_unifiedcontactprofiles_c2profile_acquired_contact_v1__stream
+- name: enriched_product_viewed_event
+  kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-product-viewed-event-v1
+  kafka_topic_entity_name: enriched_product_viewed_event
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: unifiedcontactprofiles
+  max_tasks: 12
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module naming
+- name: enriched_checkout_started_event
+  kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-checkout-started-event-v1
+  kafka_topic_entity_name: enriched_checkout_started_event
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: unifiedcontactprofiles
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module naming
+- name: enriched_checkout_completed_event
+  kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-checkout-completed-event-v1
+  kafka_topic_entity_name: enriched_checkout_completed_event
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: unifiedcontactprofiles
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module naming
+- name: enriched_collection_viewed_event
+  kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-collection-viewed-event-v1
+  kafka_topic_entity_name: enriched_collection_viewed_event
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: unifiedcontactprofiles
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module naming
+- name: enriched_page_viewed_event
+  kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-page-viewed-event-v1
+  kafka_topic_entity_name: enriched_page_viewed_event
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: unifiedcontactprofiles
+  max_tasks: 12
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module naming
+- name: enriched_payment_info_submitted_event
+  kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-payment-info-submitted-event-v1
+  kafka_topic_entity_name: enriched_payment_info_submitted_event
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: unifiedcontactprofiles
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module naming
+- name: enriched_product_added_to_cart_event
+  kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-product-added-to-cart-event-v1
+  kafka_topic_entity_name: enriched_product_added_to_cart_event
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: unifiedcontactprofiles
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module naming
+- name: enriched_search_submitted_event
+  kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-search-submitted-event-v1
+  kafka_topic_entity_name: enriched_search_submitted_event
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: unifiedcontactprofiles
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module naming
+- name: unifiedprofile
+  kafka_topic: prd.crmandmarketing.unifiedcontactprofiles.c2profile.unifiedprofile.v1
+  kafka_topic_entity_name: unifiedprofile
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: unifiedcontactprofiles
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module naming
+- name: contactlink
+  kafka_topic: prd.crmandmarketing.unifiedcontactprofiles.c2profile.contactlink.v1
+  kafka_topic_entity_name: contactlink
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: unifiedcontactprofiles
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module naming
+- name: payment_transactions
+  kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-payment-transactions-v1
+  kafka_topic_entity_name: payment_transactions
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: unifiedcontactprofiles
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module naming
+- name: enriched_product_removed_from_cart_event
+  kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-product-removed-from-cart-event-v1
+  kafka_topic_entity_name: enriched_product_removed_from_cart_event
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: unifiedcontactprofiles
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module naming
+- name: enriched_shipping_info_submitted_event
+  kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-shipping-info-submitted-event-v1
+  kafka_topic_entity_name: enriched_shipping_info_submitted_event
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: unifiedcontactprofiles
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module naming
+- name: enriched_structured_custom_event
+  kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-structured-custom-event-v1
+  kafka_topic_entity_name: enriched_structured_custom_event
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: unifiedcontactprofiles
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module naming
+- name: enriched_booking
+  kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-booking-v1
+  kafka_topic_entity_name: enriched_booking
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: unifiedcontactprofiles
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module naming
+# Non-c2profile streams
+- name: enriched_service
+  kafka_topic: prd-integrationandautomation-mailchimp-service-enriched-v1
+  kafka_topic_entity_name: enriched_service
+  entity_version: v1
+  level_0: integrationandautomation
+  level_1: mailchimp
+  max_tasks: 3
+  schemas_enable: true
+- name: attribution
+  kafka_topic: prd-crmandmarketing-marketingandcrmanalytics-attribution-v2
+  kafka_topic_entity_name: attribution
+  entity_version: v2
+  level_0: crmandmarketing
+  level_1: marketingandcrmanalytics
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module has non-standard name
+- name: emailclickwithclient
+  kafka_topic: prd-crmandmarketing-marketingandcrmanalytics-emailclickwithclient-v1
+  kafka_topic_entity_name: emailclickwithclient
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: marketingandcrmanalytics
+  max_tasks: 3
+  schemas_enable: true
+- name: trackinglinkclickwithclient
+  kafka_topic: prd-crmandmarketing-marketingchannelmanagement-trackinglinkclickwithclient-v1
+  kafka_topic_entity_name: trackinglinkclickwithclient
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: marketingchannelmanagement
+  max_tasks: 3
+  schemas_enable: true
+- name: icpdatabyrealm
+  kafka_topic: prd_mailchimp_mailchimpappfoundations_icpdatabyrealm_v1
+  kafka_topic_entity_name: icpdatabyrealm
+  entity_version: v1
+  level_0: mailchimp
+  level_1: mailchimpappfoundations
+  max_tasks: 12
+  schemas_enable: true

@@ -104,6 +104,10 @@ def kafka_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
                             continue
 
                         for stream in streams:
+                            if stream.get("skip_kafka_sync"):
+                                print(f"Skipping Kafka sync for {stream['name']} (skip_kafka_sync=true)")
+                                continue
+
                             append_config(
                                 stream=stream,
                                 direction=direction,
