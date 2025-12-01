@@ -3,3 +3,6 @@
 *.DS_Store
 
 __pycache__
+
+# Local config (user-specific paths)
+user_config.yaml

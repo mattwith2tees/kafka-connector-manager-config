@@ -22,7 +22,19 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 2. Define Your Stream
+### 2. Configure Local Paths
+
+Create a `user_config.yaml` file in the repo root with your local paths to Pantropy and mc-gcp-to-ieb:
+
+```yaml
+# user_config.yaml (gitignored)
+pantropy_path: /your/path/to/pantropy/terraform/data/business-intelligence/mc-domain-events/{env}/table_streams_domain_events.tf
+mc_gcp_to_ieb_path: /your/path/to/mc-gcp-to-ieb/app/mc_gcp_to_ieb/configs/{environment}/{direction}-{variant}/
+```
+
+> **Note:** The `{env}`, `{environment}`, `{direction}`, and `{variant}` placeholders are replaced at runtime. No need to update those values.
+
+### 3. Define Your Stream
 
 Create or update a YAML file in the appropriate swimlane/environment directory:
 
@@ -31,7 +43,7 @@ mc_gcp_to_ieb_config/configs/<swimlane>/<env>/ingest.yaml   # Kafka → BigQuery
 mc_gcp_to_ieb_config/configs/<swimlane>/<env>/publish.yaml  # BigQuery → Kafka
 ```
 
-### 3. Generate Configs
+### 4. Generate Configs
 
 ```bash
 source .venv/bin/activate
