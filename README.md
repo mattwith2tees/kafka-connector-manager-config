@@ -41,7 +41,6 @@ python cli.py terraform sync
 
 # Generate Kafka connector configs
 python cli.py kafka sync
-
 ```
 
 ## Directory Structure
@@ -59,6 +58,7 @@ mc_gcp_to_ieb_config/
 │   │   └── prd/
 │   └── mailchimp/
 │       ├── e2e/
+│       ├── stg/
 │       └── prd/
 ├── services/                   # Generation logic
 │   ├── gcp/                    # Terraform module generation
@@ -111,6 +111,10 @@ streams:
     pub_sub_topic: custom-topic-name         # For ingest (sink) connectors
     pub_sub_subscription: custom-sub-name    # For publish (source) connectors
 
+    # Optional: Skip sync for legacy configs (see "Legacy Configurations" section)
+    skip_terraform_sync: true                # Skip Terraform module generation
+    skip_kafka_sync: true                    # Skip Kafka connector generation
+
     # Optional: GCP labels for cost attribution
     labels:
       intuit-billing-capability: my-capability
@@ -131,6 +135,8 @@ streams:
 | `schemas_enable` | YES | Whether to use Schema Registry (`true`/`false`) Default=true |
 | `pub_sub_topic` | NO | Custom Pub/Sub topic name (auto-generated if omitted) |
 | `pub_sub_subscription` | NO | Custom Pub/Sub subscription name (auto-generated if omitted) |
+| `skip_terraform_sync` | NO | If `true`, skip Terraform generation (for legacy configs) |
+| `skip_kafka_sync` | NO | If `true`, skip Kafka connector generation (for legacy configs) |
 | `labels` | NO | Key-value pairs for GCP resource labeling |
 
 ## CLI Commands
@@ -197,3 +203,33 @@ schemas_enable: true
 6. **Request approval** from the `data-movement` (#mc-l2-data-movement?) team:
    - First, get your `Pantropy` PR approved and merged.
    - Then, request review and merge for your `mc-gcp-to-ieb` PR.
+
+## Legacy Configurations
+
+Some streams that were deployed before this repo was created have non-standard naming in Terraform or Kafka. These configs are documented here as the source of truth but use skip flags to prevent generating duplicate infrastructure:
+
+| Flag | Purpose |
+|------|---------|
+| `skip_terraform_sync: true` | Terraform module already exists with different naming convention |
+| `skip_kafka_sync: true` | Kafka connector already exists or is test data |
+
+**When to use skip flags:**
+- The stream was deployed manually before this tool existed
+- The Terraform module name doesn't match the standard pattern: `{level_0}_{level_1}_{entity}_{version}__stream`
+- The config is test/sample data not intended for deployment
+
+**Example:**
+
+```yaml
+- name: aisle_beacons
+  kafka_topic: aisle_beacons
+  kafka_topic_entity_name: aisle_beacons
+  entity_version: v1
+  level_0: aifabric
+  level_1: crmandmarketing
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module: aifabric_aisle_beacons__stream (non-standard)
+```
+
+> **Note:** New streams should NOT use skip flags. Only use them for documenting pre-existing legacy deployments.
