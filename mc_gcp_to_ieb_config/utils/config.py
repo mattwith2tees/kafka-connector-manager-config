@@ -25,12 +25,12 @@ def load_config() -> dict:
 
 
 def get_pantropy_path() -> str:
-    """Get the Pantropy terraform file path template."""
+    """Get local path for Pantropy repo."""
     config = load_config()
     return config["pantropy_path"]
 
 
 def get_mc_gcp_to_ieb_path() -> str:
-    """Get the mc-gcp-to-ieb configs directory template."""
+    """Get local path for mc-gcp-to-ieb repo."""
     config = load_config()
     return config["mc_gcp_to_ieb_path"]
