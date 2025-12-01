@@ -1,15 +1,32 @@
 streams:
-  - name: test-event-stream                                                          # Unique name for this domain event stream
-    kafka_topic: e2e-crmandmarketing-marketingandcrmanalytics-test-event-stream-v1   # Kafka topic to publish/consume
-    entity_version: v1
-    level_0: crmandmarketing
-    level_1: martketingchannelmanagement
-    kafka_topic_entity_name: test-event-stream
-    max_tasks: 3
-    schemas_enable: true
-    materialize: true
-    iedm_schema: crmandmarketing/mailchimp/marketingandcrmanalytics/entities/Attribution.schema.json
-
-    labels:                                                                          # optional labels for cost attribution and team mapping
-      intuit-billing-capability: mc-data-understanding
-      intuit-billing-service: data-quality
+- name: test-event-stream
+  kafka_topic: e2e-crmandmarketing-marketingandcrmanalytics-test-event-stream-v1
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: martketingchannelmanagement
+  kafka_topic_entity_name: test-event-stream
+  max_tasks: 3
+  schemas_enable: true
+  materialize: true
+  iedm_schema: crmandmarketing/mailchimp/marketingandcrmanalytics/entities/Attribution.schema.json
+  skip_terraform_sync: true  # Test data - not deployed
+  skip_kafka_sync: true      # Test data - not deployed
+  labels:
+    intuit-billing-capability: mc-data-understanding
+    intuit-billing-service: data-quality
+- name: emailclickwithclient
+  kafka_topic: e2e-crmandmarketing-marketingandcrmanalytics-emailclickwithclient-v1
+  kafka_topic_entity_name: emailclickwithclient
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: marketingandcrmanalytics
+  max_tasks: 3
+  schemas_enable: true
+- name: trackinglinkclickwithclient
+  kafka_topic: e2e-crmandmarketing-marketingchannelmanagement-trackinglinkclickwithclient-v1
+  kafka_topic_entity_name: trackinglinkclickwithclient
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: marketingchannelmanagement
+  max_tasks: 3
+  schemas_enable: true

@@ -1,0 +1,10 @@
+streams:
+- name: aisle_beacons
+  kafka_topic: aisle_beacons
+  kafka_topic_entity_name: aisle_beacons
+  entity_version: v1
+  level_0: aifabric
+  level_1: crmandmarketing
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module has non-standard name (no level_1, no version)

@@ -1,13 +1,23 @@
 streams:
-  - name: test-event-stream-publish                                                          # Unique name for this domain event stream
-    kafka_topic: e2e-crmandmarketing-marketingandcrmanalytics-test-event-stream-publish-v1   # Kafka topic to publish/consume
-    entity_version: v1
-    level_0: crmandmarketing
-    level_1: martketingchannelmanagement
-    kafka_topic_entity_name: test-event-stream-publish
-    max_tasks: 3
-    schemas_enable: true
-
-    labels:                                                                          # optional labels for cost attribution and team mapping
-      intuit-billing-capability: mc-data-understanding
-      intuit-billing-service: data-quality
+- name: test-event-stream-publish
+  kafka_topic: e2e-crmandmarketing-marketingandcrmanalytics-test-event-stream-publish-v1
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: martketingchannelmanagement
+  kafka_topic_entity_name: test-event-stream-publish
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Test data - not deployed
+  skip_kafka_sync: true      # Test data - not deployed
+  labels:
+    intuit-billing-capability: mc-data-understanding
+    intuit-billing-service: data-quality
+- name: predicteddemographics
+  kafka_topic: e2e.aifabric.crmandmarketing.mailchimp.predicteddemographics.v1
+  kafka_topic_entity_name: predicteddemographics
+  entity_version: v1
+  level_0: aifabric
+  level_1: crmandmarketing
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module has non-standard name (no version suffix)
