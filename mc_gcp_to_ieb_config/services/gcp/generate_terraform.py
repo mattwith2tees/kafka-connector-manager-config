@@ -1,9 +1,8 @@
 import yaml
 
 from mc_gcp_to_ieb_config.utils.jinja import render_template
+from mc_gcp_to_ieb_config.utils.config import get_pantropy_path, validate_config
 from pathlib import Path
-
-TERRAFORM_MODULE_FILE = "/Users/mturner14/Documents/git/pantropy/terraform/data/business-intelligence/mc-domain-events/{env}/table_streams_domain_events.tf"
 
 
 def module_exists(file_path: str, module_name: str) -> bool:
@@ -36,10 +35,11 @@ def append_config(stream, direction: str, swimlane: str, environment: str):
     """Appending new Terrform module blocks to Pantropy."""
     config = render_terraform(stream, direction, swimlane, environment)
 
+    terraform_path = get_pantropy_path()
     if environment == "prd":
-        output = TERRAFORM_MODULE_FILE.format(env="prod")
+        output = terraform_path.format(env="prod")
     else:
-        output = TERRAFORM_MODULE_FILE.format(env="staging")
+        output = terraform_path.format(env="staging")
 
     module_name = f'{stream["level_0"]}_{stream["level_1"]}_{stream["kafka_topic_entity_name"]}_{stream["entity_version"]}__stream'
 
@@ -53,6 +53,7 @@ def append_config(stream, direction: str, swimlane: str, environment: str):
 
 def terraform_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
     """Iterate through all swimlane directories and append new entries to Pantropy."""
+    validate_config()
     base = Path(base_path)
 
     for swimlane_dir in base.iterdir():
@@ -70,7 +71,9 @@ def terraform_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
 
                         for stream in streams:
                             if stream.get("skip_terraform_sync"):
-                                print(f"Skipping Terraform sync for {stream['name']} (skip_terraform_sync=true)")
+                                print(
+                                    f"Skipping Terraform sync for {stream['name']} (skip_terraform_sync=true)"
+                                )
                                 continue
 
                             append_config(

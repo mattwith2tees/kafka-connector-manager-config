@@ -4,8 +4,8 @@ import os
 from pathlib import Path
 from mc_gcp_to_ieb_config.utils.jinja import render_template
 from mc_gcp_to_ieb_config.utils.util import get_variant
+from mc_gcp_to_ieb_config.utils.config import get_mc_gcp_to_ieb_path, validate_config
 
-KAFKA_CONNECTORS_DIR = "/Users/mturner14/Documents/git/mc-gcp-to-ieb/app/mc_gcp_to_ieb/configs/{environment}/{direction}-{variant}/"
 KAFKA_CONNECTORS_FILE = "connectors.yaml"
 
 
@@ -57,7 +57,7 @@ def append_config(stream, direction: str, swimlane: str, environment: str):
 
     variant = get_variant(swimlane=swimlane)
 
-    kafka_dir = KAFKA_CONNECTORS_DIR.format(
+    kafka_dir = get_mc_gcp_to_ieb_path().format(
         environment=environment, direction=direction, variant=variant
     )
     connector_path = os.path.join(kafka_dir, KAFKA_CONNECTORS_FILE)
@@ -88,6 +88,7 @@ def append_config(stream, direction: str, swimlane: str, environment: str):
 
 def kafka_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
     """Iterate through all swimlane directories and append new entries to connector configs."""
+    validate_config()
     base = Path(base_path)
 
     for swimlane_dir in base.iterdir():
@@ -105,7 +106,9 @@ def kafka_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
 
                         for stream in streams:
                             if stream.get("skip_kafka_sync"):
-                                print(f"Skipping Kafka sync for {stream['name']} (skip_kafka_sync=true)")
+                                print(
+                                    f"Skipping Kafka sync for {stream['name']} (skip_kafka_sync=true)"
+                                )
                                 continue
 
                             append_config(
