@@ -11,7 +11,7 @@ CAMEL_TO_SNAKE = re.compile("((?<=[a-z0-9])[A-Z]|(?!^)[A-Z](?=[a-z]))")
 TYPE_MAPPINGS = {
     "amount": "numeric",
     "boolean": "bool",
-    "date-time": "timestamp",
+    "date-time": "string",
     "date": "date",
     "double": "double",
     "email": "string",

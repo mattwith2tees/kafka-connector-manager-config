@@ -30,3 +30,21 @@ streams:
   level_1: marketingchannelmanagement
   max_tasks: 3
   schemas_enable: true
+  materialize: true
+  iedm_schema: crmandmarketing/mailchimp/marketingchannelmanagement/entities/TrackingLinkClickWithClient.schema.json
+  events_table_id: mc-domain-events-staging.mailchimp.crmandmarketing_marketingchannelmanagement_trackinglinkclickwithclient_v1
+  primary_key:
+    - id
+- name: icpdatabyrealm
+  materialize: true
+  iedm_schema: customergrowthandengagement/personalization/idealcustomerprofile/entities/icpdatabyrealm.schema.json
+  events_table_id: mc-domain-events-staging.mailchimp.mailchimp_mailchimpappfoundations_icpdatabyrealm_v1
+  primary_key:
+    - id
+- name: attribution
+  materialize: true
+  iedm_schema: crmandmarketing/mailchimp/marketingandcrmanalytics/entities/Attribution.schema.json
+  events_table_id: mc-domain-events-staging.mailchimp.crmandmarketing_marketingandcrmanalytics_attribution_v2
+  primary_key:
+    - id
+    
