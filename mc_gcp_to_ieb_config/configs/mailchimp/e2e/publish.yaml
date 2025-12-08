@@ -29,4 +29,3 @@ streams:
   level_1: mailchimp
   max_tasks: 3
   schemas_enable: true
-  pub_sub_subscription: mtl-c2-metrics-bdes-sub
