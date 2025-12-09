@@ -16,6 +16,17 @@ def module_exists(file_path: str, module_name: str) -> bool:
         return False
 
 
+def iam_binding_exists(file_path: str, resource_name: str) -> bool:
+    """Check if a Terraform IAM binding resource with the given name exists."""
+    try:
+        with open(file_path, "r") as tf:
+            content = tf.read()
+            return f'resource "google_pubsub_topic_iam_member" "{resource_name}"' in content
+    except (IOError, OSError) as e:
+        print(f"Error reading Terraform file {file_path}: {e}")
+        return False
+
+
 def render_terraform(stream, direction: str, swimlane: str, environment: str):
     """Constructing context for Terraform jinja template."""
     terraform_context = {
@@ -29,6 +40,29 @@ def render_terraform(stream, direction: str, swimlane: str, environment: str):
     }
 
     return render_template(terraform_context, "terraform_module.j2")
+
+
+def get_pub_sub_topic_name(stream, direction: str, swimlane: str) -> str:
+    """Get the Pub/Sub topic name, either from config or auto-generated."""
+    if "pub_sub_topic" in stream:
+        return stream["pub_sub_topic"]
+    # Auto-generate topic name following the standard pattern
+    return f"{direction}-{swimlane}-{stream['level_0']}_{stream['level_1']}_{stream['kafka_topic_entity_name']}_{stream['entity_version']}"
+
+
+def render_iam_binding(stream, direction: str, swimlane: str, member: str, member_index: int):
+    """Constructing context for IAM binding jinja template."""
+    iam_context = {
+        "kafka_topic_entity_name": stream["kafka_topic_entity_name"],
+        "entity_version": stream["entity_version"],
+        "level_0": stream["level_0"],
+        "level_1": stream["level_1"],
+        "pub_sub_topic": get_pub_sub_topic_name(stream, direction, swimlane),
+        "member": member,
+        "member_index": member_index,
+    }
+
+    return render_template(iam_context, "pubsub_iam_binding.j2")
 
 
 def append_config(stream, direction: str, swimlane: str, environment: str):
@@ -49,6 +83,38 @@ def append_config(stream, direction: str, swimlane: str, environment: str):
         with open(output, "a") as tf:
             tf.write("\n" + config)
             print(f"Appended Terraform module to {output}")
+
+
+def get_iam_path(environment: str) -> str:
+    """Get the path to the IAM terraform file, derived from pantropy_path."""
+    terraform_path = get_pantropy_path()
+    if environment == "prd":
+        base_path = terraform_path.format(env="prod")
+    else:
+        base_path = terraform_path.format(env="staging")
+
+    # Replace the terraform filename with iam.tf
+    return str(Path(base_path).parent / "iam.tf")
+
+
+def append_iam_bindings(stream, direction: str, swimlane: str, environment: str):
+    """Appending IAM bindings for publishers to Pantropy iam.tf."""
+    publishers = stream.get("publishers", [])
+    if not publishers:
+        return
+
+    output = get_iam_path(environment)
+
+    for idx, member in enumerate(publishers):
+        resource_name = f'{stream["level_0"]}_{stream["level_1"]}_{stream["kafka_topic_entity_name"]}_{stream["entity_version"]}__publisher_{idx}'
+
+        if iam_binding_exists(output, resource_name):
+            print(f"IAM binding {resource_name} already exists")
+        else:
+            iam_config = render_iam_binding(stream, direction, swimlane, member, idx)
+            with open(output, "a") as tf:
+                tf.write("\n" + iam_config)
+                print(f"Appended IAM binding for {member} to {output}")
 
 
 def terraform_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
@@ -77,6 +143,14 @@ def terraform_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
                                 continue
 
                             append_config(
+                                stream=stream,
+                                direction=direction,
+                                swimlane=swimlane_dir.name,
+                                environment=env_dir.name,
+                            )
+
+                            # Append IAM bindings for publishers (if specified)
+                            append_iam_bindings(
                                 stream=stream,
                                 direction=direction,
                                 swimlane=swimlane_dir.name,

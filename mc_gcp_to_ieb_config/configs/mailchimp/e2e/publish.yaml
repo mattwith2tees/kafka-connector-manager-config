@@ -29,3 +29,5 @@ streams:
   level_1: mailchimp
   max_tasks: 3
   schemas_enable: true
+  publishers:
+    - serviceAccount:638887735324-compute@developer.gserviceaccount.com
