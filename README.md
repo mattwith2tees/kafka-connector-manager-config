@@ -123,6 +123,11 @@ streams:
     pub_sub_topic: custom-topic-name         # For ingest (sink) connectors
     pub_sub_subscription: custom-sub-name    # For publish (source) connectors
 
+    # Optional: Grant roles/pubsub.Publisher to service accounts on the topic
+    publishers:
+      - serviceAccount:123456-compute@developer.gserviceaccount.com
+      - serviceAccount:another-sa@project.iam.gserviceaccount.com
+
     # Optional: Skip sync for legacy configs (see "Legacy Configurations" section)
     skip_terraform_sync: true                # Skip Terraform module generation
     skip_kafka_sync: true                    # Skip Kafka connector generation
@@ -147,6 +152,7 @@ streams:
 | `schemas_enable` | YES | Whether to use Schema Registry (`true`/`false`) Default=true |
 | `pub_sub_topic` | NO | Custom Pub/Sub topic name (auto-generated if omitted) |
 | `pub_sub_subscription` | NO | Custom Pub/Sub subscription name (auto-generated if omitted) |
+| `publishers` | NO | List of service accounts to grant `roles/pubsub.Publisher` on the topic |
 | `skip_terraform_sync` | NO | If `true`, skip Terraform generation (for legacy configs) |
 | `skip_kafka_sync` | NO | If `true`, skip Kafka connector generation (for legacy configs) |
 | `labels` | NO | Key-value pairs for GCP resource labeling |
@@ -183,6 +189,19 @@ module "crmandmarketing_marketingchannelmanagement_my-entity_v1__stream" {
   level_0                 = "crmandmarketing"
   level_1                 = "marketingchannelmanagement"
   gcp_labels              = local.gcp_labels
+}
+```
+
+### IAM Binding (when `publishers` specified)
+
+If you specify `publishers` in your stream config, the tool generates IAM bindings to grant `roles/pubsub.Publisher`. These are written to `iam.tf` in the same directory as the other IAM Terraform modules (e.g., `pantropy/.../mc-domain-events/staging/iam.tf`):
+
+```hcl
+resource "google_pubsub_topic_iam_member" "crmandmarketing_marketingchannelmanagement_my-entity_v1__publisher_0" {
+  project = var.project_id
+  topic   = "publish-mailchimp-crmandmarketing_marketingchannelmanagement_my-entity_v1"
+  role    = "roles/pubsub.Publisher"
+  member  = "serviceAccount:123456-compute@developer.gserviceaccount.com"
 }
 ```
 

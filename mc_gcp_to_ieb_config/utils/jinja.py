@@ -6,6 +6,7 @@ TEMPLATES_DIR = ROOT_DIR / "templates"
 
 TEMPLATE_REGISTRY = {
     "terraform_module.j2": "terraform",
+    "pubsub_iam_binding.j2": "terraform",
     "connector_config.yaml.j2": "kafka",
 }
 
