@@ -4,5 +4,7 @@ resource "google_pubsub_topic_iam_member" "{{ level_0 }}_{{ level_1 }}_{{ kafka_
   topic   = "{{ pub_sub_topic }}"
   role    = "roles/pubsub.Publisher"
   member  = "{{ member }}"
+
+  depends_on = [module.{{ level_0 }}_{{ level_1 }}_{{ kafka_topic_entity_name }}_{{ entity_version }}__stream]
 }
 
