@@ -194,13 +194,13 @@ module "crmandmarketing_marketingchannelmanagement_my-entity_v1__stream" {
 
 ### IAM Binding (when `publishers` specified)
 
-If you specify `publishers` in your stream config, the tool generates IAM bindings to grant `roles/pubsub.Publisher`. These are written to `iam.tf` in the same directory as the other IAM Terraform modules (e.g., `pantropy/.../mc-domain-events/staging/iam.tf`):
+If you specify `publishers` in your stream config, the tool generates IAM bindings to grant `roles/pubsub.publisher`. These are written to `iam.tf` in the same directory as the other IAM Terraform modules (e.g., `pantropy/.../mc-domain-events/staging/iam.tf`):
 
 ```hcl
 resource "google_pubsub_topic_iam_member" "crmandmarketing_marketingchannelmanagement_my-entity_v1__publisher_0" {
   project = var.project_id
   topic   = "publish-mailchimp-crmandmarketing_marketingchannelmanagement_my-entity_v1"
-  role    = "roles/pubsub.Publisher"
+  role    = "roles/pubsub.publisher"
   member  = "serviceAccount:123456-compute@developer.gserviceaccount.com"
 }
 ```
