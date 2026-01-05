@@ -32,13 +32,20 @@ def write_to_airflow_directory(bigquery_fields: dict, original_iedm_path: str):
         print(f"Wrote: {directory}/{filename}")
 
 
+def get_airflow_relative_directory_to_write_schema(original_iedm_path: str):
+    return re.sub(r"/\w*.schema.json", "", original_iedm_path)
+
+
 def get_airflow_directory_to_write_schema(original_iedm_path: str):
-    directory = re.sub(r"/\w*.schema.json", "", original_iedm_path)
-    return f"{AIRFLOW_SCHEMA_ROOT}/{directory}"
+    return f"{AIRFLOW_SCHEMA_ROOT}/{get_airflow_relative_directory_to_write_schema(original_iedm_path)}"
 
 
 def get_airflow_materializer_config(env: str):
     return f"{AIRFLOW_FOLDER}/dags/core/domain_event_materializer/config-{env}.yaml"
+
+
+def get_relative_airflow_schema_path(original_iedm_path: str):
+    return f"{get_airflow_relative_directory_to_write_schema(original_iedm_path)}/{get_filename(original_iedm_path)}"
 
 
 def get_filename(original_iedm_path: str):
@@ -65,25 +72,40 @@ def airflow_schema_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
                         continue
 
                     for stream in streams:
-                        if stream.get("materialize") == True and stream.get("iedm_schema"):
-                            iedm_schema_file = find_iedm_schema_file(stream.get("iedm_schema"))
+                        materialization_config = stream.get("materialization")
+                        if materialization_config and materialization_config.get("enabled") == True:
+                            iedm_schema_file = find_iedm_schema_file(
+                                materialization_config.get("iedm_schema")
+                            )
                             iedm_json = read_json(iedm_schema_file)
                             fields = get_iedm_fields(
                                 iedm_json["properties"], iedm_json["definitions"]
                             )
                             bigquery_fields = get_bigquery_fields(fields)
-                            write_to_airflow_directory(bigquery_fields, stream.get("iedm_schema"))
-                            tables_to_materialize[env].append(
-                                {
-                                    "table": stream.get("name"),
-                                    "events_table_id": stream.get("events_table_id"),
-                                    "iedm_schema": stream.get("iedm_schema"),
-                                    "primary_key": stream.get("primary_key"),
-                                }
+                            write_to_airflow_directory(
+                                bigquery_fields, materialization_config.get("iedm_schema")
                             )
+                            table_config = {
+                                "materialized_table_name": stream.get("name"),
+                                "events_table_id": materialization_config.get("events_table_id"),
+                                "schema_path": get_relative_airflow_schema_path(
+                                    materialization_config.get("iedm_schema")
+                                ),
+                                "primary_keys": materialization_config.get("primary_keys"),
+                            }
+                            if materialization_config.get("create_lookback_window_days"):
+                                table_config["create_lookback_window_days"] = (
+                                    materialization_config.get("create_lookback_window_days")
+                                )
+                            if materialization_config.get("timestamp_format"):
+                                table_config["timestamp_format"] = (
+                                    materialization_config.get("timestamp_format"),
+                                )
+
+                            tables_to_materialize[env].append(table_config)
 
     for env in ("e2e", "prd"):
         with open(get_airflow_materializer_config(env), "w") as af:
             if len(tables_to_materialize[env]):
                 airflow_config = {"tables_to_materialize": tables_to_materialize[env]}
-                yaml.safe_dump(airflow_config, af)
+                yaml.safe_dump(airflow_config, af, sort_keys=False)
