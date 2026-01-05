@@ -1,6 +1,6 @@
 # stream for {{ kafka_topic_entity_name }}
 module "{{ level_0 }}_{{ level_1 }}_{{ kafka_topic_entity_name }}_{{ entity_version }}__stream" {
-  source                  = "./table-stream"
+  source                  = "{{ './table-stream-v2' if environment == 'prd' else './table-stream' }}"
   direction               = "{{ direction }}"
   swimlane                = "{{ swimlane }}"
   environment             = "{{ environment }}"
