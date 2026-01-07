@@ -23,6 +23,36 @@ def find_iedm_schema_file(path: str) -> str:
     return f"{IEDM_SCHEMAJSON_FOLDER}/{path}"
 
 
+def guess_iedm_schema_file(
+    level_0: str, level_1: str, kafka_topic: str, kafka_topic_entity_name: str, entity_version: str
+) -> str:
+    # Only underscores
+    level_0 = level_0.replace("-", "_").replace("\.", "_")
+    level_1 = level_1.replace("-", "_").replace("\.", "_")
+    kafka_topic = kafka_topic.replace("-", "_").replace("\.", "_")
+    kafka_topic_entity_name = kafka_topic_entity_name.replace("-", "_").replace("\.", "_")
+    # kafka topic will be [prd|stage]_L0_L1_[Ln_]EntityName_version
+    # Assuming the format: L0/L1/[Ln/]entities/EntityName.schema.json
+    try:
+        index_of_l1_end = kafka_topic.index(level_1) + len(level_1)
+        index_of_entity_name = kafka_topic.index(kafka_topic_entity_name)
+    except ValueError:
+        raise ValueError(
+            f"The L1 or entity name were not found in the kafka topic, we can't guess the iedm schema location, you'll need to fill out the iedm_schema_location_override config for this domain event: {kafka_topic_entity_name}"
+        )
+    schema_path = f"{level_0}/{level_1}"
+    for x in kafka_topic[index_of_l1_end:index_of_entity_name].split("_"):
+        if x != "":
+            schema_path = f"{schema_path}/{x}"
+    schema_path = f"{schema_path}/entities/{snake_to_camel(kafka_topic_entity_name)}.schema.json"
+    return schema_path
+
+
+def snake_to_camel(s: str) -> str:
+    # foo_bar to FooBar
+    return "".join([x.capitalize() for x in s.split("_")])
+
+
 def write_to_airflow_directory(bigquery_fields: dict, original_iedm_path: str):
     directory = get_airflow_directory_to_write_schema(original_iedm_path)
     os.makedirs(directory, exist_ok=True)
@@ -74,22 +104,31 @@ def airflow_schema_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
                     for stream in streams:
                         materialization_config = stream.get("materialization")
                         if materialization_config and materialization_config.get("enabled") == True:
-                            iedm_schema_file = find_iedm_schema_file(
-                                materialization_config.get("iedm_schema")
-                            )
+                            if materialization_config.get("iedm_schema_location_override"):
+                                iedm_schema_file_location = materialization_config.get(
+                                    "iedm_schema_location_override"
+                                )
+                            else:
+                                iedm_schema_file_location = guess_iedm_schema_file(
+                                    stream.get("level_0"),
+                                    stream.get("level_1"),
+                                    stream.get("kafka_topic"),
+                                    stream.get("kafka_topic_entity_name"),
+                                    stream.get("entity_version"),
+                                )
+
+                            iedm_schema_file = find_iedm_schema_file(iedm_schema_file_location)
                             iedm_json = read_json(iedm_schema_file)
                             fields = get_iedm_fields(
                                 iedm_json["properties"], iedm_json["definitions"]
                             )
                             bigquery_fields = get_bigquery_fields(fields)
-                            write_to_airflow_directory(
-                                bigquery_fields, materialization_config.get("iedm_schema")
-                            )
+                            write_to_airflow_directory(bigquery_fields, iedm_schema_file_location)
                             table_config = {
                                 "materialized_table_name": stream.get("name"),
                                 "events_table_id": materialization_config.get("events_table_id"),
                                 "schema_path": get_relative_airflow_schema_path(
-                                    materialization_config.get("iedm_schema")
+                                    iedm_schema_file_location
                                 ),
                                 "primary_keys": materialization_config.get("primary_keys"),
                             }
@@ -109,3 +148,4 @@ def airflow_schema_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
             if len(tables_to_materialize[env]):
                 airflow_config = {"tables_to_materialize": tables_to_materialize[env]}
                 yaml.safe_dump(airflow_config, af, sort_keys=False)
+                print(f"wrote config file: {af.name}")
