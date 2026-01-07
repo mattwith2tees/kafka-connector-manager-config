@@ -31,22 +31,4 @@ streams:
   materialization:
     enabled: true
     iedm_schema_location_override: crmandmarketing/mailchimp/marketingchannelmanagement/entities/TrackingLinkClickWithClient.schema.json
-    iedm_schema: crmandmarketing/mailchimp/marketingchannelmanagement/entities/TrackingLinkClickWithClient.schema.json
-    events_table_id: mc-domain-events-staging.mailchimp.crmandmarketing_marketingchannelmanagement_trackinglinkclickwithclient_v1
-    primary_keys:
-      - id
-- name: icpdatabyrealm
-  materialization:
-    enabled: true
-    iedm_schema_location_override: customergrowthandengagement/personalization/idealcustomerprofile/entities/icpdatabyrealm.schema.json
-    events_table_id: mc-domain-events-staging.mailchimp.mailchimp_mailchimpappfoundations_icpdatabyrealm_v1
-    primary_keys:
-      - realmId
-- name: attribution
-  materialization:
-    enabled: true
-    iedm_schema_location_override: crmandmarketing/mailchimp/marketingandcrmanalytics/entities/Attribution.schema.json
-    events_table_id: mc-domain-events-staging.mailchimp.crmandmarketing_marketingandcrmanalytics_attribution_v2
-    primary_keys:
-      - id
     

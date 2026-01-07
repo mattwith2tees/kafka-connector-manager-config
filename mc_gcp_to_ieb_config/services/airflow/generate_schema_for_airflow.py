@@ -48,6 +48,17 @@ def guess_iedm_schema_file(
     return schema_path
 
 
+def guess_events_table_id(
+    env: str, dataset: str, level_0: str, level_1: str, kafka_topic_entity_name: str, version: str
+) -> str:
+    """I think it's L1_L2_entity_name_version"""
+    project = "mc-domain-events-prod" if env == "prd" else "mc-domain-events-staging"
+    level_0 = level_0.replace("-", "_").replace(".", "_").lower()
+    level_1 = level_1.replace("-", "_").replace(".", "_").lower()
+    kafka_topic_entity_name = kafka_topic_entity_name.replace("-", "_").replace(".", "_").lower()
+    return f"{project}.{dataset}.{level_0}_{level_1}_{kafka_topic_entity_name}_{version}"
+
+
 def snake_to_camel(s: str) -> str:
     # foo_bar to FooBar
     return "".join([x.capitalize() for x in s.split("_")])
@@ -122,15 +133,24 @@ def airflow_schema_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
                             fields = get_iedm_fields(
                                 iedm_json["properties"], iedm_json["definitions"]
                             )
+                            primary_keys = iedm_json["@uniqueIdentifierProperties"]
                             bigquery_fields = get_bigquery_fields(fields)
                             write_to_airflow_directory(bigquery_fields, iedm_schema_file_location)
+                            events_table_id = guess_events_table_id(
+                                env,
+                                swimlane_dir.name,
+                                stream.get("level_0"),
+                                stream.get("level_1"),
+                                stream.get("kafka_topic_entity_name"),
+                                stream.get("entity_version"),
+                            )
                             table_config = {
                                 "materialized_table_name": stream.get("name"),
-                                "events_table_id": materialization_config.get("events_table_id"),
+                                "events_table_id": events_table_id,
                                 "schema_path": get_relative_airflow_schema_path(
                                     iedm_schema_file_location
                                 ),
-                                "primary_keys": materialization_config.get("primary_keys"),
+                                "primary_keys": primary_keys,
                             }
                             if materialization_config.get("create_lookback_window_days"):
                                 table_config["create_lookback_window_days"] = (

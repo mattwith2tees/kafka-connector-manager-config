@@ -2,6 +2,7 @@ from mc_gcp_to_ieb_config.services.airflow.generate_schema_for_airflow import (
     get_airflow_directory_to_write_schema,
     get_filename,
     guess_iedm_schema_file,
+    guess_events_table_id,
     AIRFLOW_SCHEMA_ROOT,
 )
 
@@ -31,6 +32,18 @@ guess_iedm_schema_test_data = [
     ),
 ]
 
+guess_table_id_test_data = [
+    (
+        "prd",
+        "mailchimp",
+        "crmandmarketing",
+        "marketingandcrmanalytics",
+        "attribution",
+        "v2",
+        "mc-domain-events-prod.mailchimp.crmandmarketing_marketingandcrmanalytics_attribution_v2",
+    ),
+]
+
 
 def test_get_airflow_directory_to_write_schema():
     assert (
@@ -52,5 +65,17 @@ def test_guess_iedm_schema_file(level_0, level_1, kafka_topic, kafka_topic_entit
         guess_iedm_schema_file(
             level_0, level_1, kafka_topic, kafka_topic_entity_name, entity_version
         )
+        == expected
+    )
+
+
+@pytest.mark.parametrize(
+    "env,dataset,level_0,level_1,kafka_topic_entity_name,version,expected", guess_table_id_test_data
+)
+def test_guess_event_table_id(
+    env, dataset, level_0, level_1, kafka_topic_entity_name, version, expected
+):
+    assert (
+        guess_events_table_id(env, dataset, level_0, level_1, kafka_topic_entity_name, version)
         == expected
     )
