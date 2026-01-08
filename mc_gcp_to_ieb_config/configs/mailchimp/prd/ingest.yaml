@@ -11,11 +11,6 @@ streams:
   skip_terraform_sync: true  # Legacy module: crmandmarketing_unifiedcontactprofiles_c2profile_acquired_contact_v1__stream
   materialization:
     enabled: true
-    iedm_schema: crmandmarketing/unifiedcontactprofiles/c2profile/entities/AcquiredContact.schema.json
-    # events table id should be sourced from _where this file is_, with the final table name taken from somewhere.
-    events_table_id: mc-domain-events-prod.mailchimp.crmandmarketing_unifiedcontactprofiles_acquired_contact_v1
-    primary_keys:
-    - id
 - name: enriched_product_viewed_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-product-viewed-event-v1
   kafka_topic_entity_name: enriched_product_viewed_event
@@ -27,9 +22,6 @@ streams:
   skip_terraform_sync: true  # Legacy module naming
   materialization:
     enabled: true
-    iedm_schema: 
-    events_table_id:
-    primary_keys:
 - name: enriched_checkout_started_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-checkout-started-event-v1
   kafka_topic_entity_name: enriched_checkout_started_event
@@ -41,9 +33,6 @@ streams:
   skip_terraform_sync: true  # Legacy module naming
   materialization:
     enabled: true
-    iedm_schema: 
-    events_table_id:
-    primary_keys:
 - name: enriched_checkout_completed_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-checkout-completed-event-v1
   kafka_topic_entity_name: enriched_checkout_completed_event
@@ -55,9 +44,6 @@ streams:
   skip_terraform_sync: true  # Legacy module naming
   materialization:
     enabled: true
-    iedm_schema: 
-    events_table_id:
-    primary_keys:
 - name: enriched_collection_viewed_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-collection-viewed-event-v1
   kafka_topic_entity_name: enriched_collection_viewed_event
@@ -69,9 +55,6 @@ streams:
   skip_terraform_sync: true  # Legacy module naming
   materialization:
     enabled: true
-    iedm_schema: 
-    events_table_id:
-    primary_keys:
 - name: enriched_page_viewed_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-page-viewed-event-v1
   kafka_topic_entity_name: enriched_page_viewed_event
@@ -83,9 +66,6 @@ streams:
   skip_terraform_sync: true  # Legacy module naming
   materialization:
     enabled: true
-    iedm_schema: 
-    events_table_id:
-    primary_keys:
 - name: enriched_payment_info_submitted_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-payment-info-submitted-event-v1
   kafka_topic_entity_name: enriched_payment_info_submitted_event
@@ -97,9 +77,6 @@ streams:
   skip_terraform_sync: true  # Legacy module naming
   materialization:
     enabled: true
-    iedm_schema: 
-    events_table_id:
-    primary_keys:
 - name: enriched_product_added_to_cart_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-product-added-to-cart-event-v1
   kafka_topic_entity_name: enriched_product_added_to_cart_event
@@ -111,9 +88,6 @@ streams:
   skip_terraform_sync: true  # Legacy module naming
   materialization:
     enabled: true
-    iedm_schema: 
-    events_table_id:
-    primary_keys:
 - name: enriched_search_submitted_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-search-submitted-event-v1
   kafka_topic_entity_name: enriched_search_submitted_event
@@ -125,9 +99,6 @@ streams:
   skip_terraform_sync: true  # Legacy module naming
   materialization:
     enabled: true
-    iedm_schema: 
-    events_table_id:
-    primary_keys:
 - name: unifiedprofile
   kafka_topic: prd.crmandmarketing.unifiedcontactprofiles.c2profile.unifiedprofile.v1
   kafka_topic_entity_name: unifiedprofile
@@ -140,8 +111,6 @@ streams:
   materialization:
     enabled: true
     iedm_schema_location_override: crmandmarketing/unifiedcontactprofiles/c2profile/entities/UnifiedProfile.schema.json
-    events_table_id:
-    primary_keys:
 - name: contactlink
   kafka_topic: prd.crmandmarketing.unifiedcontactprofiles.c2profile.contactlink.v1
   kafka_topic_entity_name: contactlink
@@ -154,8 +123,6 @@ streams:
   materialization:
     enabled: true
     iedm_schema_location_override: crmandmarketing/unifiedcontactprofiles/c2profile/entities/ContactLink.schema.json
-    events_table_id:
-    primary_keys:
 - name: payment_transactions
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-payment-transactions-v1
   kafka_topic_entity_name: payment_transactions
@@ -168,9 +135,6 @@ streams:
   materialization:
     enabled: true
     iedm_schema_location_override: crmandmarketing/unifiedcontactprofiles/c2profile/entities/EnrichedPaymentTransaction.schema.json
-    iedm_schema: 
-    events_table_id:
-    primary_keys:
 - name: enriched_product_removed_from_cart_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-product-removed-from-cart-event-v1
   kafka_topic_entity_name: enriched_product_removed_from_cart_event
@@ -182,9 +146,6 @@ streams:
   skip_terraform_sync: true  # Legacy module naming
   materialization:
     enabled: true
-    iedm_schema: 
-    events_table_id:
-    primary_keys:
 - name: enriched_shipping_info_submitted_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-shipping-info-submitted-event-v1
   kafka_topic_entity_name: enriched_shipping_info_submitted_event
@@ -196,9 +157,6 @@ streams:
   skip_terraform_sync: true  # Legacy module naming
   materialization:
     enabled: true
-    iedm_schema: 
-    events_table_id:
-    primary_keys:
 - name: enriched_structured_custom_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-structured-custom-event-v1
   kafka_topic_entity_name: enriched_structured_custom_event
@@ -210,9 +168,6 @@ streams:
   skip_terraform_sync: true  # Legacy module naming
   materialization:
     enabled: true
-    iedm_schema: 
-    events_table_id:
-    primary_keys:
 - name: enriched_booking
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-booking-v1
   kafka_topic_entity_name: enriched_booking
@@ -224,9 +179,6 @@ streams:
   skip_terraform_sync: true  # Legacy module naming
   materialization:
     enabled: true
-    iedm_schema: 
-    events_table_id:
-    primary_keys:
 # Non-c2profile streams
 - name: enriched_service
   kafka_topic: prd-integrationandautomation-mailchimp-service-enriched-v1
@@ -239,8 +191,6 @@ streams:
   materialization:
     enabled: true
     iedm_schema_location_override: integrationandautomation/mailchimp/entities/EnrichedService.schema.json
-    events_table_id:
-    primary_keys:
 - name: attribution
   kafka_topic: prd-crmandmarketing-marketingandcrmanalytics-attribution-v2
   kafka_topic_entity_name: attribution
@@ -253,8 +203,6 @@ streams:
   materialization:
     enabled: true
     iedm_schema_location_override: crmandmarketing/mailchimp/marketingandcrmanalytics/entities/Attribution.schema.json
-    events_table_id:
-    primary_keys:
 - name: emailclickwithclient
   kafka_topic: prd-crmandmarketing-marketingandcrmanalytics-emailclickwithclient-v1
   kafka_topic_entity_name: emailclickwithclient
@@ -266,8 +214,6 @@ streams:
   materialization:
     enabled: true
     iedm_schema_location_override: crmandmarketing/mailchimp/marketingandcrmanalytics/entities/EmailClickWithClientEvent.schema.json
-    events_table_id:
-    primary_keys:
 - name: trackinglinkclickwithclient
   kafka_topic: prd-crmandmarketing-marketingchannelmanagement-trackinglinkclickwithclient-v1
   kafka_topic_entity_name: trackinglinkclickwithclient
@@ -279,8 +225,6 @@ streams:
   materialization:
     enabled: true
     iedm_schema_location_override: crmandmarketing/mailchimp/marketingchannelmanagement/entities/TrackingLinkClickWithClient.schema.json
-    events_table_id:
-    primary_keys:
 - name: icpdatabyrealm
   kafka_topic: prd_mailchimp_mailchimpappfoundations_icpdatabyrealm_v1
   kafka_topic_entity_name: icpdatabyrealm
@@ -292,5 +236,3 @@ streams:
   materialization:
     enabled: true
     iedm_schema_location_override: customergrowthandengagement/personalization/idealcustomerprofile/entities/icpdatabyrealm.schema.json
-    events_table_id:
-    primary_keys:
