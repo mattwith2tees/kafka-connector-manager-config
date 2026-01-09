@@ -7,7 +7,6 @@ streams:
   level_1: crmandmarketing
   max_tasks: 3
   schemas_enable: true
-  skip_terraform_sync: true  # Legacy module has non-standard name (no version suffix)
 - name: mtlc2metrics
   kafka_topic: prd-aifabric-crmandmarketing-mailchimp-mtlc2metrics-v1
   kafka_topic_entity_name: mtlc2metrics
