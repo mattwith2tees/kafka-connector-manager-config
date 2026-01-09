@@ -1,0 +1,30 @@
+streams:
+- name: predicteddemographics
+  kafka_topic: prd.aifabric.crmandmarketing.mailchimp.predicteddemographics.v1
+  kafka_topic_entity_name: predicteddemographics
+  entity_version: v1
+  level_0: aifabric
+  level_1: crmandmarketing
+  max_tasks: 3
+  schemas_enable: true
+  skip_terraform_sync: true  # Legacy module has non-standard name (no version suffix)
+- name: mtlc2metrics
+  kafka_topic: prd-aifabric-crmandmarketing-mailchimp-mtlc2metrics-v1
+  kafka_topic_entity_name: mtlc2metrics
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: mailchimp
+  max_tasks: 3
+  schemas_enable: true
+  publishers:
+    - serviceAccount:82418792444-compute@developer.gserviceaccount.com
+- name: mtlc2metrics_activation
+  kafka_topic: prd-aifabric-crmandmarketing-mailchimp-mtlc2metrics-v1-activation
+  kafka_topic_entity_name: mtlc2metrics_activation
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: mailchimp
+  max_tasks: 3
+  schemas_enable: true
+  publishers:
+    - serviceAccount:82418792444-compute@developer.gserviceaccount.com
