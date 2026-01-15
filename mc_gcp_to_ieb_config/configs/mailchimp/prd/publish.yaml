@@ -7,6 +7,8 @@ streams:
   level_1: crmandmarketing
   max_tasks: 3
   schemas_enable: true
+  publishers:
+    - serviceAccount:rsg-audience-prod-sa@rsg-audience-expansion-prod.iam.gserviceaccount.com
 - name: mtlc2metrics
   kafka_topic: prd-aifabric-crmandmarketing-mailchimp-mtlc2metrics-v2
   kafka_topic_entity_name: mtlc2metrics
