@@ -9,6 +9,8 @@ streams:
   max_tasks: 12
   schemas_enable: true
   skip_terraform_sync: true  # Legacy module: crmandmarketing_unifiedcontactprofiles_c2profile_acquired_contact_v1__stream
+  materialization:
+    enabled: true
 - name: enriched_product_viewed_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-product-viewed-event-v1
   kafka_topic_entity_name: enriched_product_viewed_event
@@ -18,6 +20,8 @@ streams:
   max_tasks: 12
   schemas_enable: true
   skip_terraform_sync: true  # Legacy module naming
+  materialization:
+    enabled: true
 - name: enriched_checkout_started_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-checkout-started-event-v1
   kafka_topic_entity_name: enriched_checkout_started_event
@@ -27,6 +31,8 @@ streams:
   max_tasks: 3
   schemas_enable: true
   skip_terraform_sync: true  # Legacy module naming
+  materialization:
+    enabled: true
 - name: enriched_checkout_completed_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-checkout-completed-event-v1
   kafka_topic_entity_name: enriched_checkout_completed_event
@@ -36,6 +42,8 @@ streams:
   max_tasks: 3
   schemas_enable: true
   skip_terraform_sync: true  # Legacy module naming
+  materialization:
+    enabled: true
 - name: enriched_collection_viewed_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-collection-viewed-event-v1
   kafka_topic_entity_name: enriched_collection_viewed_event
@@ -45,6 +53,8 @@ streams:
   max_tasks: 3
   schemas_enable: true
   skip_terraform_sync: true  # Legacy module naming
+  materialization:
+    enabled: true
 - name: enriched_page_viewed_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-page-viewed-event-v1
   kafka_topic_entity_name: enriched_page_viewed_event
@@ -54,6 +64,8 @@ streams:
   max_tasks: 12
   schemas_enable: true
   skip_terraform_sync: true  # Legacy module naming
+  materialization:
+    enabled: true
 - name: enriched_payment_info_submitted_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-payment-info-submitted-event-v1
   kafka_topic_entity_name: enriched_payment_info_submitted_event
@@ -63,6 +75,8 @@ streams:
   max_tasks: 3
   schemas_enable: true
   skip_terraform_sync: true  # Legacy module naming
+  materialization:
+    enabled: true
 - name: enriched_product_added_to_cart_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-product-added-to-cart-event-v1
   kafka_topic_entity_name: enriched_product_added_to_cart_event
@@ -72,6 +86,8 @@ streams:
   max_tasks: 3
   schemas_enable: true
   skip_terraform_sync: true  # Legacy module naming
+  materialization:
+    enabled: true
 - name: enriched_search_submitted_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-search-submitted-event-v1
   kafka_topic_entity_name: enriched_search_submitted_event
@@ -81,6 +97,8 @@ streams:
   max_tasks: 3
   schemas_enable: true
   skip_terraform_sync: true  # Legacy module naming
+  materialization:
+    enabled: true
 - name: unifiedprofile
   kafka_topic: prd.crmandmarketing.unifiedcontactprofiles.c2profile.unifiedprofile.v1
   kafka_topic_entity_name: unifiedprofile
@@ -90,6 +108,9 @@ streams:
   max_tasks: 3
   schemas_enable: true
   skip_terraform_sync: true  # Legacy module naming
+  materialization:
+    enabled: true
+    iedm_schema_location_override: crmandmarketing/unifiedcontactprofiles/c2profile/entities/UnifiedProfile.schema.json
 - name: contactlink
   kafka_topic: prd.crmandmarketing.unifiedcontactprofiles.c2profile.contactlink.v1
   kafka_topic_entity_name: contactlink
@@ -99,6 +120,9 @@ streams:
   max_tasks: 3
   schemas_enable: true
   skip_terraform_sync: true  # Legacy module naming
+  materialization:
+    enabled: true
+    iedm_schema_location_override: crmandmarketing/unifiedcontactprofiles/c2profile/entities/ContactLink.schema.json
 - name: payment_transactions
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-payment-transactions-v1
   kafka_topic_entity_name: payment_transactions
@@ -108,6 +132,9 @@ streams:
   max_tasks: 3
   schemas_enable: true
   skip_terraform_sync: true  # Legacy module naming
+  materialization:
+    enabled: true
+    iedm_schema_location_override: crmandmarketing/unifiedcontactprofiles/c2profile/entities/EnrichedPaymentTransaction.schema.json
 - name: enriched_product_removed_from_cart_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-product-removed-from-cart-event-v1
   kafka_topic_entity_name: enriched_product_removed_from_cart_event
@@ -117,6 +144,8 @@ streams:
   max_tasks: 3
   schemas_enable: true
   skip_terraform_sync: true  # Legacy module naming
+  materialization:
+    enabled: true
 - name: enriched_shipping_info_submitted_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-shipping-info-submitted-event-v1
   kafka_topic_entity_name: enriched_shipping_info_submitted_event
@@ -126,6 +155,8 @@ streams:
   max_tasks: 3
   schemas_enable: true
   skip_terraform_sync: true  # Legacy module naming
+  materialization:
+    enabled: true
 - name: enriched_structured_custom_event
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-structured-custom-event-v1
   kafka_topic_entity_name: enriched_structured_custom_event
@@ -135,6 +166,8 @@ streams:
   max_tasks: 3
   schemas_enable: true
   skip_terraform_sync: true  # Legacy module naming
+  materialization:
+    enabled: true
 - name: enriched_booking
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-enriched-booking-v1
   kafka_topic_entity_name: enriched_booking
@@ -144,6 +177,8 @@ streams:
   max_tasks: 3
   schemas_enable: true
   skip_terraform_sync: true  # Legacy module naming
+  materialization:
+    enabled: true
 # Non-c2profile streams
 - name: enriched_service
   kafka_topic: prd-integrationandautomation-mailchimp-service-enriched-v1
@@ -153,6 +188,9 @@ streams:
   level_1: mailchimp
   max_tasks: 3
   schemas_enable: true
+  materialization:
+    enabled: true
+    iedm_schema_location_override: integrationandautomation/mailchimp/entities/EnrichedService.schema.json
 - name: attribution
   kafka_topic: prd-crmandmarketing-marketingandcrmanalytics-attribution-v2
   kafka_topic_entity_name: attribution
@@ -162,6 +200,9 @@ streams:
   max_tasks: 3
   schemas_enable: true
   skip_terraform_sync: true  # Legacy module has non-standard name
+  materialization:
+    enabled: true
+    iedm_schema_location_override: crmandmarketing/mailchimp/marketingandcrmanalytics/entities/Attribution.schema.json
 - name: emailclickwithclient
   kafka_topic: prd-crmandmarketing-marketingandcrmanalytics-emailclickwithclient-v1
   kafka_topic_entity_name: emailclickwithclient
@@ -170,6 +211,9 @@ streams:
   level_1: marketingandcrmanalytics
   max_tasks: 3
   schemas_enable: true
+  materialization:
+    enabled: true
+    iedm_schema_location_override: crmandmarketing/mailchimp/marketingandcrmanalytics/entities/EmailClickWithClientEvent.schema.json
 - name: trackinglinkclickwithclient
   kafka_topic: prd-crmandmarketing-marketingchannelmanagement-trackinglinkclickwithclient-v1
   kafka_topic_entity_name: trackinglinkclickwithclient
@@ -178,6 +222,9 @@ streams:
   level_1: marketingchannelmanagement
   max_tasks: 3
   schemas_enable: true
+  materialization:
+    enabled: true
+    iedm_schema_location_override: crmandmarketing/mailchimp/marketingchannelmanagement/entities/TrackingLinkClickWithClient.schema.json
 - name: icpdatabyrealm
   kafka_topic: prd_mailchimp_mailchimpappfoundations_icpdatabyrealm_v1
   kafka_topic_entity_name: icpdatabyrealm
@@ -185,4 +232,74 @@ streams:
   level_0: mailchimp
   level_1: mailchimpappfoundations
   max_tasks: 12
+  schemas_enable: true
+  materialization:
+    enabled: true
+    iedm_schema_location_override: customergrowthandengagement/personalization/idealcustomerprofile/entities/icpdatabyrealm.schema.json
+# Reviews streams
+- name: reviews_enriched
+  kafka_topic: prd-integrationandautomation-mailchimp-reviews-enriched-v1
+  kafka_topic_entity_name: reviews_enriched
+  entity_version: v1
+  level_0: integrationandautomation
+  level_1: mailchimp
+  max_tasks: 1
+  schemas_enable: true
+- name: eligible_reviews_enriched
+  kafka_topic: prd-integrationandautomation-mailchimp-eligible-reviews-enriched-v1
+  kafka_topic_entity_name: eligible_reviews_enriched
+  entity_version: v1
+  level_0: integrationandautomation
+  level_1: mailchimp
+  max_tasks: 1
+  schemas_enable: true
+# Acquired segment streams
+- name: acquiredsegmentmembers_enriched
+  kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-acquiredsegmentmembers-enriched-v1
+  kafka_topic_entity_name: acquiredsegmentmembers_enriched
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: unifiedcontactprofiles
+  max_tasks: 3
+  schemas_enable: true
+- name: acquiredsegment_enriched
+  kafka_topic: prd-integrationandautomation-mailchimp-acquiredsegment-enriched-v1
+  kafka_topic_entity_name: acquiredsegment_enriched
+  entity_version: v1
+  level_0: integrationandautomation
+  level_1: mailchimp
+  max_tasks: 3
+  schemas_enable: true
+# Ecommerce streams
+- name: backinstockrequest
+  kafka_topic: prd-crmandmarketing-ecommerce-backinstockrequest-v1
+  kafka_topic_entity_name: backinstockrequest
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: ecommerce
+  max_tasks: 1
+  schemas_enable: true
+- name: inventory_update_event
+  kafka_topic: prd-crmandmarketing-ecommerce-inventory-update-event-v1
+  kafka_topic_entity_name: inventory_update_event
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: ecommerce
+  max_tasks: 12
+  schemas_enable: true
+- name: abandoned_product_browse_event
+  kafka_topic: prd-crmandmarketing-ecommerce-abandoned-product-browse-event-v1
+  kafka_topic_entity_name: abandoned_product_browse_event
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: ecommerce
+  max_tasks: 3
+  schemas_enable: true
+- name: abandoned_cart_event
+  kafka_topic: prd-crmandmarketing-ecommerce-abandoned-cart-event-v1
+  kafka_topic_entity_name: abandoned_cart_event
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: ecommerce
+  max_tasks: 3
   schemas_enable: true

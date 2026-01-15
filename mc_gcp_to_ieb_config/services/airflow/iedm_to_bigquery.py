@@ -23,13 +23,19 @@ TYPE_MAPPINGS = {
     "object": "record",
     "string": "string",
     "uri": "string",
+    "decimal": "decimal",
 }
 
 
 def read_json(path: Path) -> dict:
     """Reads a JSON file into memory."""
-    with open(path) as file:
-        return json.load(file)
+    try:
+        with open(path) as file:
+            return json.load(file)
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            f"{path} was not found. You will need to override the materialization config entry to manually enter the iedm schema"
+        )
 
 
 def get_iedm_fields(properties: dict, definitions: dict) -> dict:
@@ -90,12 +96,12 @@ def _find_type(field: dict) -> str:
         return field["@semantic_type"]
     elif "format" in field:
         return field["format"]
+    elif "items" in field and "type" in field["items"]:
+        return field["items"]["type"]
     elif "type" in field and isinstance(field["type"], str):
         return field["type"]
     elif "type" in field and isinstance(field["type"], list):
         return next(x for x in field["type"] if x != "null")
-    elif "items" in field and "type" in field["items"]:
-        return field["items"]["type"]
     else:
         raise Exception(f"Failed to determine data type for field:\n{json.dumps(field, indent=4)}")
 
@@ -153,7 +159,11 @@ def _get_bigquery_field_type(iedm_field: dict) -> str:
     """Converts an IEDM field type to a BigQuery field type."""
     _type = iedm_field["_type"]
     _type = _type.split("(")[0]
-    return TYPE_MAPPINGS[_type]
+    if _type in TYPE_MAPPINGS:
+        return TYPE_MAPPINGS[_type]
+    else:
+        print(iedm_field)
+        raise Exception(f"type not found {_type}")
 
 
 def _get_bigquery_field_mode(iedm_field: dict) -> str:

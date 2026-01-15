@@ -7,8 +7,6 @@ streams:
   kafka_topic_entity_name: test-event-stream
   max_tasks: 3
   schemas_enable: true
-  materialize: true
-  iedm_schema: crmandmarketing/mailchimp/marketingandcrmanalytics/entities/Attribution.schema.json
   skip_terraform_sync: true  # Test data - not deployed
   skip_kafka_sync: true      # Test data - not deployed
   labels:
@@ -30,3 +28,7 @@ streams:
   level_1: marketingchannelmanagement
   max_tasks: 3
   schemas_enable: true
+  materialization:
+    enabled: true
+    iedm_schema_location_override: crmandmarketing/mailchimp/marketingchannelmanagement/entities/TrackingLinkClickWithClient.schema.json
+    
