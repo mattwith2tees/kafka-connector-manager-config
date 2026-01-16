@@ -98,23 +98,28 @@ def get_iam_path(environment: str) -> str:
 
 
 def append_iam_bindings(stream, direction: str, swimlane: str, environment: str):
-    """Appending IAM bindings for publishers to Pantropy iam.tf."""
+    """Append IAM bindings for publishers to the iam.tf file."""
+    # Check if the stream has publishers configured
     publishers = stream.get("publishers", [])
     if not publishers:
         return
 
-    output = get_iam_path(environment)
+    iam_path = get_iam_path(environment)
 
     for idx, member in enumerate(publishers):
+        # Generate resource name for this IAM binding
         resource_name = f'{stream["level_0"]}_{stream["level_1"]}_{stream["kafka_topic_entity_name"]}_{stream["entity_version"]}__publisher_{idx}'
 
-        if iam_binding_exists(output, resource_name):
-            print(f"IAM binding {resource_name} already exists")
-        else:
-            iam_config = render_iam_binding(stream, direction, swimlane, member, idx)
-            with open(output, "a") as tf:
-                tf.write("\n" + iam_config)
-                print(f"Appended IAM binding for {member} to {output}")
+        # Check if this IAM binding already exists
+        if iam_binding_exists(iam_path, resource_name):
+            continue
+
+        # Render and append the IAM binding
+        iam_config = render_iam_binding(stream, direction, swimlane, member, idx)
+
+        with open(iam_path, "a") as tf:
+            tf.write("\n" + iam_config)
+            print(f"Appended IAM binding for {member} to {iam_path}")
 
 
 def terraform_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
