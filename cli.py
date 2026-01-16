@@ -1,8 +1,11 @@
+import logging
 import click
 
 from mc_gcp_to_ieb_config.commands.kafka import kafka_group
 from mc_gcp_to_ieb_config.commands.terraform import terraform_group
 from mc_gcp_to_ieb_config.commands.airflow import airflow_group
+
+logging.basicConfig(level=logging.INFO)
 
 
 @click.group()

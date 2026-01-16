@@ -1,8 +1,11 @@
+import logging
 import yaml
 
 from mc_gcp_to_ieb_config.utils.jinja import render_template
 from mc_gcp_to_ieb_config.utils.config import get_pantropy_path, validate_config
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 
 def module_exists(file_path: str, module_name: str) -> bool:
@@ -12,7 +15,7 @@ def module_exists(file_path: str, module_name: str) -> bool:
             content = tf.read()
             return f'module "{module_name}"' in content
     except (IOError, OSError) as e:
-        print(f"Error reading Terraform module file {file_path}: {e}")
+        logger.warning(f"Error reading Terraform module file {file_path}: {e}")
         return False
 
 
@@ -23,7 +26,7 @@ def iam_binding_exists(file_path: str, resource_name: str) -> bool:
             content = tf.read()
             return f'resource "google_pubsub_topic_iam_member" "{resource_name}"' in content
     except (IOError, OSError) as e:
-        print(f"Error reading Terraform file {file_path}: {e}")
+        logger.warning(f"Error reading Terraform file {file_path}: {e}")
         return False
 
 
@@ -65,8 +68,8 @@ def render_iam_binding(stream, direction: str, swimlane: str, member: str, membe
     return render_template(iam_context, "pubsub_iam_binding.j2")
 
 
-def append_config(stream, direction: str, swimlane: str, environment: str):
-    """Appending new Terrform module blocks to Pantropy."""
+def append_config(stream, direction: str, swimlane: str, environment: str) -> dict:
+    """Appending new Terrform module blocks to Pantropy. Returns stats dict."""
     config = render_terraform(stream, direction, swimlane, environment)
 
     terraform_path = get_pantropy_path()
@@ -78,11 +81,13 @@ def append_config(stream, direction: str, swimlane: str, environment: str):
     module_name = f'{stream["level_0"]}_{stream["level_1"]}_{stream["kafka_topic_entity_name"]}_{stream["entity_version"]}__stream'
 
     if module_exists(output, module_name):
-        print(f"No new Terraform modules found")
+        logger.debug(f"Module {module_name} already exists, skipping")
+        return {"modules_added": 0, "modules_skipped": 1}
     else:
         with open(output, "a") as tf:
             tf.write("\n" + config)
-            print(f"Appended Terraform module to {output}")
+            logger.debug(f"Appended Terraform module {module_name} to {output}")
+        return {"modules_added": 1, "modules_skipped": 0}
 
 
 def get_iam_path(environment: str) -> str:
@@ -97,35 +102,46 @@ def get_iam_path(environment: str) -> str:
     return str(Path(base_path).parent / "iam.tf")
 
 
-def append_iam_bindings(stream, direction: str, swimlane: str, environment: str):
-    """Append IAM bindings for publishers to the iam.tf file."""
-    # Check if the stream has publishers configured
+def append_iam_bindings(stream, direction: str, swimlane: str, environment: str) -> dict:
+    """Append IAM bindings for publishers to the iam.tf file. Returns stats dict."""
+    stats = {"iam_added": 0, "iam_skipped": 0}
+    
     publishers = stream.get("publishers", [])
     if not publishers:
-        return
+        return stats
 
     iam_path = get_iam_path(environment)
 
     for idx, member in enumerate(publishers):
-        # Generate resource name for this IAM binding
         resource_name = f'{stream["level_0"]}_{stream["level_1"]}_{stream["kafka_topic_entity_name"]}_{stream["entity_version"]}__publisher_{idx}'
 
-        # Check if this IAM binding already exists
         if iam_binding_exists(iam_path, resource_name):
+            logger.debug(f"IAM binding {resource_name} already exists, skipping")
+            stats["iam_skipped"] += 1
             continue
 
-        # Render and append the IAM binding
         iam_config = render_iam_binding(stream, direction, swimlane, member, idx)
 
         with open(iam_path, "a") as tf:
             tf.write("\n" + iam_config)
-            print(f"Appended IAM binding for {member} to {iam_path}")
+            logger.debug(f"Appended IAM binding {resource_name} for {member}")
+            stats["iam_added"] += 1
+    
+    return stats
 
 
 def terraform_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
     """Iterate through all swimlane directories and append new entries to Pantropy."""
     validate_config()
     base = Path(base_path)
+    
+    totals = {
+        "modules_added": 0,
+        "modules_skipped": 0,
+        "iam_added": 0,
+        "iam_skipped": 0,
+        "streams_skipped": 0,
+    }
 
     for swimlane_dir in base.iterdir():
         for env_dir in swimlane_dir.iterdir():
@@ -142,25 +158,37 @@ def terraform_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
 
                         for stream in streams:
                             if stream.get("skip_terraform_sync"):
-                                print(
+                                logger.debug(
                                     f"Skipping Terraform sync for {stream['name']} (skip_terraform_sync=true)"
                                 )
+                                totals["streams_skipped"] += 1
                                 continue
 
-                            append_config(
+                            module_stats = append_config(
                                 stream=stream,
                                 direction=direction,
                                 swimlane=swimlane_dir.name,
                                 environment=env_dir.name,
                             )
+                            totals["modules_added"] += module_stats["modules_added"]
+                            totals["modules_skipped"] += module_stats["modules_skipped"]
 
-                            # Append IAM bindings for publishers (if specified)
-                            append_iam_bindings(
+                            iam_stats = append_iam_bindings(
                                 stream=stream,
                                 direction=direction,
                                 swimlane=swimlane_dir.name,
                                 environment=env_dir.name,
                             )
+                            totals["iam_added"] += iam_stats["iam_added"]
+                            totals["iam_skipped"] += iam_stats["iam_skipped"]
                     except Exception as e:
-                        print(f"Error loading {config_file}: {e}")
+                        logger.warning(f"Error loading {config_file}: {e}")
                         continue
+
+    logger.info(
+        f"Terraform sync complete: "
+        f"{totals['modules_added']} modules added, {totals['modules_skipped']} skipped | "
+        f"{totals['iam_added']} IAM bindings added, {totals['iam_skipped']} skipped"
+    )
+    if totals["streams_skipped"] > 0:
+        logger.info(f"{totals['streams_skipped']} streams skipped (skip_terraform_sync=true)")
