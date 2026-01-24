@@ -10,9 +10,9 @@ streams:
   publishers:
     - serviceAccount:rsg-audience-prod-sa@rsg-audience-expansion-prod.iam.gserviceaccount.com
 - name: mtlc2metrics
-  kafka_topic: prd-aifabric-crmandmarketing-mailchimp-mtlc2metrics-v2
+  kafka_topic: prd-aifabric-crmandmarketing-mailchimp-mtlc2metrics-v3
   kafka_topic_entity_name: mtlc2metrics
-  entity_version: v2
+  entity_version: v3
   level_0: crmandmarketing
   level_1: mailchimp
   max_tasks: 3
