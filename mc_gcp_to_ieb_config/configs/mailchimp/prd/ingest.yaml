@@ -236,6 +236,17 @@ streams:
   materialization:
     enabled: true
     iedm_schema_location_override: customergrowthandengagement/personalization/idealcustomerprofile/entities/icpdatabyrealm.schema.json
+- name: emailengagementevent
+  kafka_topic: prd-intuit-crmandmarketing-mailchimp-outreaches-emailengagementevent-v1
+  kafka_topic_entity_name: emailengagementevent
+  entity_version: v1
+  level_0: intuit
+  level_1: crmandmarketing
+  max_tasks: 12
+  schemas_enable: true
+  materialization:
+    enabled: true
+    iedm_schema_location_override: crmandmarketing/behaviortracking/entities/EmailEngagementEvent.schema.json
 # Reviews streams
 - name: reviews_enriched
   kafka_topic: prd-integrationandautomation-mailchimp-reviews-enriched-v1
