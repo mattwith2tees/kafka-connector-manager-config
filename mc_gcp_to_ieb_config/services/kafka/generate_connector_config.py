@@ -11,7 +11,12 @@ KAFKA_CONNECTORS_FILE = "connectors.yaml"
 
 def get_config_key(config: dict) -> tuple:
     """Generate a unique key for a connector config."""
-    return (config.get("name"), config.get("level_0"), config.get("level_1"), config.get("entity_version"))
+    return (
+        config.get("name"),
+        config.get("level_0"),
+        config.get("level_1"),
+        config.get("entity_version"),
+    )
 
 
 def render_kafka_config(stream, direction: str, swimlane: str):
@@ -52,8 +57,8 @@ def sync_connector_configs(source_configs: list, connector_path: str):
     """
     Sync connector configs to the target file.
     - Adds new configs from source
+    - Updates existing configs with source values (e.g., max_tasks changes)
     - Removes configs that are no longer in source
-    - Preserves configs that exist in both
     """
     existing = []
     try:
@@ -64,30 +69,38 @@ def sync_connector_configs(source_configs: list, connector_path: str):
         print(f"Error reading existing config: {e}")
         raise
 
-    # Build sets of config keys for comparison
-    source_keys = {get_config_key(c) for c in source_configs}
-    existing_keys = {get_config_key(c) for c in existing}
+    # Build lookup dicts for comparison
+    source_by_key = {get_config_key(c): c for c in source_configs}
+    existing_by_key = {get_config_key(c): c for c in existing}
+
+    source_keys = set(source_by_key.keys())
+    existing_keys = set(existing_by_key.keys())
 
     # Find configs to add (in source but not in existing)
-    to_add = [c for c in source_configs if get_config_key(c) not in existing_keys]
-    
+    to_add = [source_by_key[k] for k in source_keys - existing_keys]
+
     # Find configs to remove (in existing but not in source)
-    to_remove = [c for c in existing if get_config_key(c) not in source_keys]
-    
+    to_remove = [existing_by_key[k] for k in existing_keys - source_keys]
+
+    # Find configs to update (exist in both but have different values)
+    to_update = []
+    for key in source_keys & existing_keys:
+        if source_by_key[key] != existing_by_key[key]:
+            to_update.append((existing_by_key[key], source_by_key[key]))
+
     # If no changes needed, skip
-    if not to_add and not to_remove:
+    if not to_add and not to_remove and not to_update:
         print(f"No changes needed for {connector_path}")
         return
 
-    # Build final config list: existing (minus removed) + new
-    final_configs = [c for c in existing if get_config_key(c) in source_keys]
-    final_configs.extend(to_add)
+    # Build final config list from source (this ensures all values are current)
+    final_configs = source_configs
 
     # Write updated config
     try:
         with open(connector_path, "w") as f:
             yaml.dump(final_configs, f, sort_keys=False)
-        
+
         if to_remove:
             for c in to_remove:
                 print(f"Removed: {c.get('name')} {c.get('entity_version')}")
@@ -96,6 +109,17 @@ def sync_connector_configs(source_configs: list, connector_path: str):
             for c in to_add:
                 print(f"Added: {c.get('name')} {c.get('entity_version')}")
             print(f"Added {len(to_add)} connector(s) to {connector_path}")
+        if to_update:
+            for old, new in to_update:
+                # Show what changed
+                changes = []
+                for k in set(old.keys()) | set(new.keys()):
+                    if old.get(k) != new.get(k):
+                        changes.append(f"{k}: {old.get(k)} → {new.get(k)}")
+                print(
+                    f"Updated: {new.get('name')} {new.get('entity_version')} ({', '.join(changes)})"
+                )
+            print(f"Updated {len(to_update)} connector(s) in {connector_path}")
     except (yaml.YAMLError, IOError) as e:
         print(f"Error writing connector config: {e}")
         raise
@@ -104,7 +128,7 @@ def sync_connector_configs(source_configs: list, connector_path: str):
 def kafka_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
     """
     Sync source-of-truth configs to downstream Kafka Connector configs.
-    
+
     For each environment/direction combination:
     - Collects all streams from source config
     - Renders connector configs
@@ -126,7 +150,7 @@ def kafka_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
                 config_file = env_dir / f"{direction}.yaml"
                 if not config_file.exists():
                     continue
-                    
+
                 try:
                     with open(config_file, "r") as f:
                         config = yaml.safe_load(f) or {}
@@ -146,7 +170,9 @@ def kafka_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
 
                     for stream in streams:
                         if stream.get("skip_kafka_sync"):
-                            print(f"Skipping Kafka sync for {stream['name']} (skip_kafka_sync=true)")
+                            print(
+                                f"Skipping Kafka sync for {stream['name']} (skip_kafka_sync=true)"
+                            )
                             continue
 
                         rendered = render_kafka_config(stream, direction, swimlane_dir.name)
