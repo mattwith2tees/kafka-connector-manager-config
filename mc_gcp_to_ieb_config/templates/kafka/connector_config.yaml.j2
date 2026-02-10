@@ -11,3 +11,9 @@ pub_sub_subscription: {{ pub_sub_subscription }}
 {% endif %}
 max_tasks: {{ max_tasks }}
 schemas_enable: {{ schemas_enable | lower }}
+{% if headers_publish is not none %}
+headers_publish: {{ headers_publish | lower }}
+{% endif %}
+{% if note %}
+note: {{ note | tojson }}
+{% endif %}

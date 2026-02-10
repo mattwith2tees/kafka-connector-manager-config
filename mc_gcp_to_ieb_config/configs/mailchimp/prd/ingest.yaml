@@ -244,6 +244,8 @@ streams:
   level_1: crmandmarketing
   max_tasks: 12
   schemas_enable: true
+  headers_publish: false
+  note: headers_publish is disabled for emailengagementevent due to suspected header size limits.
   materialization:
     enabled: true
     iedm_schema_location_override: crmandmarketing/behaviortracking/entities/EmailEngagementEvent.schema.json

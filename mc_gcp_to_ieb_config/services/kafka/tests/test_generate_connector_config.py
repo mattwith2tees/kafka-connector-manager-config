@@ -368,3 +368,4 @@ class TestSyncConnectorConfigs:
         finally:
             os.unlink(temp_path)
 
+
