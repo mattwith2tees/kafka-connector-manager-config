@@ -9,6 +9,39 @@ from mc_gcp_to_ieb_config.utils.config import get_mc_gcp_to_ieb_path, validate_c
 KAFKA_CONNECTORS_FILE = "connectors.yaml"
 
 
+def _truncate_value(value, max_length: int = 50) -> str:
+    """Truncate a value for display in logs."""
+    if value is None:
+        return "None"
+    str_val = str(value).replace("\n", " ").strip()
+    if len(str_val) > max_length:
+        return str_val[:max_length] + "..."
+    return str_val
+
+
+def dump_configs_with_notes(configs: list) -> str:
+    """
+    Dump configs to YAML string, converting 'note' fields to comments.
+    Notes are rendered as comment blocks above each config entry.
+    """
+    lines = []
+    for config in configs:
+        # Extract note (don't mutate original config)
+        note = config.get("note")
+        config_to_dump = {k: v for k, v in config.items() if k != "note"}
+
+        # Add note as comment if present
+        if note:
+            for note_line in note.strip().split("\n"):
+                lines.append(f"# {note_line}")
+
+        # Dump the config entry
+        config_yaml = yaml.dump([config_to_dump], sort_keys=False, default_flow_style=False)
+        lines.append(config_yaml.rstrip())
+
+    return "\n".join(lines) + "\n"
+
+
 def get_config_key(config: dict) -> tuple:
     """Generate a unique key for a connector config."""
     return (
@@ -48,6 +81,8 @@ def render_kafka_config(stream, direction: str, swimlane: str):
         ),
         "max_tasks": stream["max_tasks"],
         "schemas_enable": stream["schemas_enable"],
+        "headers_publish": stream.get("headers_publish"),
+        "note": stream.get("note"),
     }
 
     return yaml.safe_load(render_template(kafka_context, "connector_config.yaml.j2"))
@@ -99,7 +134,7 @@ def sync_connector_configs(source_configs: list, connector_path: str):
     # Write updated config
     try:
         with open(connector_path, "w") as f:
-            yaml.dump(final_configs, f, sort_keys=False)
+            f.write(dump_configs_with_notes(final_configs))
 
         if to_remove:
             for c in to_remove:
@@ -111,11 +146,13 @@ def sync_connector_configs(source_configs: list, connector_path: str):
             print(f"Added {len(to_add)} connector(s) to {connector_path}")
         if to_update:
             for old, new in to_update:
-                # Show what changed
+                # Show what changed (truncate long values for readability)
                 changes = []
                 for k in set(old.keys()) | set(new.keys()):
                     if old.get(k) != new.get(k):
-                        changes.append(f"{k}: {old.get(k)} → {new.get(k)}")
+                        old_val = _truncate_value(old.get(k))
+                        new_val = _truncate_value(new.get(k))
+                        changes.append(f"{k}: {old_val} → {new_val}")
                 print(
                     f"Updated: {new.get('name')} {new.get('entity_version')} ({', '.join(changes)})"
                 )
