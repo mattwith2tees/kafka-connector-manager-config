@@ -5,7 +5,7 @@ streams:
   entity_version: v1
   level_0: aifabric
   level_1: crmandmarketing
-  max_tasks: 12
+  max_tasks: 64
   schemas_enable: true
   publishers:
     - serviceAccount:rsg-audience-prod-sa@rsg-audience-expansion-prod.iam.gserviceaccount.com

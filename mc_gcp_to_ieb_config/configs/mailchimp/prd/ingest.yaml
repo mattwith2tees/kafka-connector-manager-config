@@ -197,7 +197,7 @@ streams:
   entity_version: v2
   level_0: crmandmarketing
   level_1: marketingandcrmanalytics
-  max_tasks: 3
+  max_tasks: 12
   schemas_enable: true
   skip_terraform_sync: true  # Legacy module has non-standard name
   materialization:
