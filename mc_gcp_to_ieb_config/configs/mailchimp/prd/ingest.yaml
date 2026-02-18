@@ -260,7 +260,7 @@ streams:
   materialization:
     enabled: true
     iedm_schema_location_override: crmandmarketing/mailchimp/marketingchannelmanagement/entities/SmsMessage.schema.json
-- name:	trackinglinkclick
+- name: trackinglinkclick
   kafka_topic: prd-crmandmarketing-marketingchannelmanagement-trackinglinkclick-v1
   kafka_topic_entity_name: trackinglinkclick
   entity_version: v1
@@ -271,7 +271,7 @@ streams:
   materialization:
     enabled: true
     iedm_schema_location_override: crmandmarketing/mailchimp/marketingchannelmanagement/entities/TrackingLinkClick.schema.json
-- name:	trackinglinkclick
+- name: smsbulk
   kafka_topic: prd-crmandmarketing-marketingchannelmanagement-smsbulk-v1
   kafka_topic_entity_name: smsbulk
   entity_version: v1
