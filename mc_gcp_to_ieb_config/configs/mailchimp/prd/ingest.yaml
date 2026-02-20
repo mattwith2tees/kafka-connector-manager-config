@@ -249,6 +249,39 @@ streams:
   materialization:
     enabled: true
     iedm_schema_location_override: crmandmarketing/behaviortracking/entities/EmailEngagementEvent.schema.json
+- name: smsmessage
+  kafka_topic: prd-crmandmarketing-marketingchannelmanagement-smsmessage-v1
+  kafka_topic_entity_name: smsmessage
+  entity_version: v1
+  level_0: intuit
+  level_1: crmandmarketing
+  max_tasks: 3
+  schemas_enable: true
+  materialization:
+    enabled: true
+    iedm_schema_location_override: crmandmarketing/mailchimp/marketingchannelmanagement/entities/SmsMessage.schema.json
+- name: trackinglinkclick
+  kafka_topic: prd-crmandmarketing-marketingchannelmanagement-trackinglinkclick-v1
+  kafka_topic_entity_name: trackinglinkclick
+  entity_version: v1
+  level_0: intuit
+  level_1: crmandmarketing
+  max_tasks: 3
+  schemas_enable: true
+  materialization:
+    enabled: true
+    iedm_schema_location_override: crmandmarketing/mailchimp/marketingchannelmanagement/entities/TrackingLinkClick.schema.json
+- name: smsbulk
+  kafka_topic: prd-crmandmarketing-marketingchannelmanagement-smsbulk-v1
+  kafka_topic_entity_name: smsbulk
+  entity_version: v1
+  level_0: intuit
+  level_1: crmandmarketing
+  max_tasks: 3
+  schemas_enable: true
+  materialization:
+    enabled: true
+    iedm_schema_location_override: crmandmarketing/mailchimp/marketingchannelmanagement/entities/SmsBulk.schema.json
 # Reviews streams
 - name: reviews_enriched
   kafka_topic: prd-integrationandautomation-mailchimp-reviews-enriched-v1
