@@ -34,3 +34,15 @@ def get_mc_gcp_to_ieb_path() -> str:
     """Get local path for mc-gcp-to-ieb repo."""
     config = load_config()
     return config["mc_gcp_to_ieb_path"]
+
+
+def get_airflow_path() -> str:
+    """Get local path for airflow repo"""
+    config = load_config()
+    return config["airflow"]
+
+
+def get_iedm_path() -> str:
+    """Get local path for iedm repo"""
+    config = load_config()
+    return config["iedm"]

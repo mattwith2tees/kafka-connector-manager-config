@@ -9,18 +9,15 @@ from mc_gcp_to_ieb_config.services.airflow.iedm_to_bigquery import (
     get_bigquery_fields,
 )
 
-BASE_PATH = "/Users/nhoffman/Projects"
-IEDM_SCHEMAJSON_FOLDER = f"{BASE_PATH}/iedm-schema/idp-artifacts/jsonschema/intuit/iedm/datamap"
-AIRFLOW_FOLDER = f"{BASE_PATH}/airflow-cloud"
-AIRFLOW_SCHEMA_ROOT = f"{BASE_PATH}/airflow-cloud/dags/core/domain_event_materializer/schemas"
+from mc_gcp_to_ieb_config.util import (
+    load_config,
+    validate_config,
+    get_iedm_path,
+    get_airflow_path
+)
 
-
-def find_iedm_schema_file(path: str) -> str:
-    # TODO - find some other, better place for this
-    assert Path(BASE_PATH).is_dir()
-    assert Path(IEDM_SCHEMAJSON_FOLDER).is_dir()
-    assert Path(AIRFLOW_FOLDER).is_dir()
-    return f"{IEDM_SCHEMAJSON_FOLDER}/{path}"
+def find_iedm_schema_file_path(path: str) -> str:
+    return f"{get_iedm_path()}/iedm-schema/idp-artifacts/jsonschema/intuit/iedm/datamap/{path}"
 
 
 def guess_iedm_schema_file(
@@ -78,11 +75,11 @@ def get_airflow_relative_directory_to_write_schema(original_iedm_path: str):
 
 
 def get_airflow_directory_to_write_schema(original_iedm_path: str):
-    return f"{AIRFLOW_SCHEMA_ROOT}/{get_airflow_relative_directory_to_write_schema(original_iedm_path)}"
+    return f"{get_airflow_path()}/{get_airflow_relative_directory_to_write_schema(original_iedm_path)}"
 
 
 def get_airflow_materializer_config(env: str):
-    return f"{AIRFLOW_FOLDER}/dags/core/domain_event_materializer/config-{env}.yaml"
+    return f"{get_airflow_path()}/dags/core/domain_event_materializer/config-{env}.yaml"
 
 
 def get_relative_airflow_schema_path(original_iedm_path: str):
@@ -94,13 +91,13 @@ def get_filename(original_iedm_path: str):
     return f"{match.group(1)}.json"
 
 
-def airflow_schema_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
+def airflow_schema_sync():
     """Iterate through all swimlane directories and add relevant BigQuery schemas to airflow-cloud"""
-    base = Path(base_path)
-
+    configs_base_path = Path("mc_gcp_to_ieb_config/configs")
     tables_to_materialize = {"e2e": [], "prd": []}
+    validate_config()
 
-    for swimlane_dir in base.iterdir():
+    for swimlane_dir in configs_base_path.iterdir():
         for env_dir in swimlane_dir.iterdir():
             config_file = env_dir / "ingest.yaml"
             env = env_dir.parts[-1]
@@ -115,6 +112,7 @@ def airflow_schema_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
                     for stream in streams:
                         materialization_config = stream.get("materialization")
                         if materialization_config and materialization_config.get("enabled") == True:
+                            # Get BigQuery Fields definition
                             if materialization_config.get("iedm_schema_location_override"):
                                 iedm_schema_file_location = materialization_config.get(
                                     "iedm_schema_location_override"
@@ -135,6 +133,7 @@ def airflow_schema_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
                             )
                             primary_keys = iedm_json["@uniqueIdentifierProperties"]
                             bigquery_fields = get_bigquery_fields(fields)
+                            # Write BigQuery Fields
                             write_to_airflow_directory(bigquery_fields, iedm_schema_file_location)
                             events_table_id = guess_events_table_id(
                                 env,
@@ -159,6 +158,10 @@ def airflow_schema_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
                             if materialization_config.get("timestamp_format"):
                                 table_config["timestamp_format"] = (
                                     materialization_config.get("timestamp_format"),
+                                )
+                            if materialization_config.get("materialization_schedule"):
+                                table_config["materialization_schedule"] = (
+                                    materialization_config.get("materialization_schedule"),
                                 )
 
                             tables_to_materialize[env].append(table_config)

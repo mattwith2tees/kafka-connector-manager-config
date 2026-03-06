@@ -8,6 +8,7 @@ This repository serves as the single source of truth for defining domain event s
 |-----------|--------|---------|
 | **Terraform** | Pantropy module blocks | Provisions GCP resources (Pub/Sub topics, subscriptions, BigQuery tables) |
 | **Kafka** | Connector configs | Configures Kafka Connect source/sink connectors in `mc-gcp-to-ieb` |
+| **Materialization** | Airflow DAG Configuration | Configures an airflow DAG to run periodically to materialize your data into a native BigQuery table |
 
 
 ## Quick Start
@@ -24,12 +25,14 @@ pip install -r requirements.txt
 
 ### 2. Configure Local Paths
 
-Create a `user_config.yaml` file in the repo root with your local paths to Pantropy and mc-gcp-to-ieb:
+Create a `user_config.yaml` file in the repo root with your local paths to Pantropy, mc-gcp-to-ieb, airflow, and iedm-schema:
 
 ```yaml
 # user_config.yaml (gitignored)
 pantropy_path: /your/path/to/pantropy/terraform/data/business-intelligence/mc-domain-events/{env}/table_streams_domain_events.tf
 mc_gcp_to_ieb_path: /your/path/to/mc-gcp-to-ieb/app/mc_gcp_to_ieb/configs/{environment}/{direction}-{variant}/
+airflow_path: /your/path/to/airflow
+iedm_path: /your/path/to/iedm-schema
 ```
 
 > **Note:** The `{env}`, `{environment}`, `{direction}`, and `{variant}` placeholders are replaced at runtime. No need to update those values.
@@ -53,6 +56,9 @@ python cli.py terraform sync
 
 # Generate Kafka connector configs
 python cli.py kafka sync
+
+# Generate airflow DAG configs for materialization
+python cli.py materialization sync
 ```
 
 ## Directory Structure
@@ -136,6 +142,14 @@ streams:
     labels:
       intuit-billing-capability: my-capability
       intuit-billing-service: my-service
+
+    # Optional: Materialization Config
+    materializtion:
+      enabled: true                          # materialize the table?
+      iedm_schema_location_override: custom/path/to/entity.schema.json  # Optional: If your IEDM schema path does not match the kafka topic name, you can override it here.
+      timestamp_format: your_custom_format   # Optional: if your timestamp format is not ISO 8601, you can enter a custom one here
+      materialization_schedule: 1d           # Optional: one of (1h, 3h, 1d): specifies how frequently you want the materialized table to merge in new data
+
 ```
 
 ### Field Details
@@ -156,6 +170,8 @@ streams:
 | `skip_terraform_sync` | NO | If `true`, skip Terraform generation (for legacy configs) |
 | `skip_kafka_sync` | NO | If `true`, skip Kafka connector generation (for legacy configs) |
 | `labels` | NO | Key-value pairs for GCP resource labeling |
+| `materialization` | NO | Key-value pairs for materialization |
+
 
 ## CLI Commands
 
@@ -165,11 +181,15 @@ python cli.py --help
 
 # Terraform commands
 python cli.py terraform --help
-python cli.py terraform sync    # Generate Terraform modules
+python cli.py terraform sync          # Generate Terraform modules
 
 # Kafka commands
 python cli.py kafka --help
-python cli.py kafka sync        # Generate Kafka connector configs
+python cli.py kafka sync              # Generate Kafka connector configs
+
+# Materialization commands
+python cli.py materialization --help
+python cli.py materialization sync    # Generate Materialization DAG configs
 ```
 
 ## Generated Output
@@ -220,6 +240,20 @@ max_tasks: 3
 schemas_enable: true
 ```
 
+### Materialization Config
+
+The `materialization sync` command adds config to airflow, along with an iedm schema file. This tells the airflow DAG how to materialize the event log table into a native bigquery table, and at what frequency (default is 3h)
+
+```
+tables_to_materialize:
+- materialized_table_name: acquired_contact
+  events_table_id: mc-domain-events-prod.mailchimp.crmandmarketing_unifiedcontactprofiles_acquired_contact_v1
+  schema_path: crmandmarketing/unifiedcontactprofiles/c2profile/entities/AcquiredContact.json
+  primary_keys:
+  - id
+  ...
+```
+
 ## Adding a New Stream
 
 1. **Identify your swimlane**: `mailchimp`, `gbsg`, or `aifabric` (more to come)
@@ -230,10 +264,17 @@ schemas_enable: true
    python cli.py terraform sync
    python cli.py kafka sync
    ```
+
+   Optional:
+   ```bash
+   python cli.py materialization sync
+   ```
+
 5. **Commit changes** to both this repo and the generated output repos
 6. **Request approval** from the `data-movement` (#mc-l2-data-movement?) team:
    - First, get your `Pantropy` PR approved and merged.
    - Then, request review and merge for your `mc-gcp-to-ieb` PR.
+   - Last (optional) If you specified materialization, review and merge the `airflow` PR
 
 ## Legacy Configurations
 
