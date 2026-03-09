@@ -105,7 +105,7 @@ def get_iam_path(environment: str) -> str:
 def append_iam_bindings(stream, direction: str, swimlane: str, environment: str) -> dict:
     """Append IAM bindings for publishers to the iam.tf file. Returns stats dict."""
     stats = {"iam_added": 0, "iam_skipped": 0}
-    
+
     publishers = stream.get("publishers", [])
     if not publishers:
         return stats
@@ -126,7 +126,7 @@ def append_iam_bindings(stream, direction: str, swimlane: str, environment: str)
             tf.write("\n" + iam_config)
             logger.debug(f"Appended IAM binding {resource_name} for {member}")
             stats["iam_added"] += 1
-    
+
     return stats
 
 
@@ -134,7 +134,7 @@ def terraform_sync(base_path: str = "mc_gcp_to_ieb_config/configs"):
     """Iterate through all swimlane directories and append new entries to Pantropy."""
     validate_config()
     base = Path(base_path)
-    
+
     totals = {
         "modules_added": 0,
         "modules_skipped": 0,

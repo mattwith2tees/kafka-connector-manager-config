@@ -21,13 +21,16 @@ def validate_config(check_airflow_and_iedm_paths_present=False) -> None:
         config = load_config()
         for config_path in config_paths:
             if not config.get(config_path):
-                print(f"Error: config path not set: {config_path}, please set that in {CONFIG_FILE}")
+                print(
+                    f"Error: config path not set: {config_path}, please set that in {CONFIG_FILE}"
+                )
                 sys.exit(1)
             directory = Path(config.get(config_path))
             if not directory.exists():
-                print(f"Error: directory: {config.get(config_path)} does not exist for config key {config_path}, please fix that")
+                print(
+                    f"Error: directory: {config.get(config_path)} does not exist for config key {config_path}, please fix that"
+                )
                 sys.exit(1)
-
 
 
 def load_config() -> dict:

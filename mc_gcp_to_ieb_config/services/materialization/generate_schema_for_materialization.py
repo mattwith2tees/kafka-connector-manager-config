@@ -9,11 +9,8 @@ from mc_gcp_to_ieb_config.services.materialization.iedm_to_bigquery import (
     get_bigquery_fields,
 )
 
-from mc_gcp_to_ieb_config.utils.config import (
-    validate_config,
-    get_iedm_path,
-    get_airflow_path
-)
+from mc_gcp_to_ieb_config.utils.config import validate_config, get_iedm_path, get_airflow_path
+
 
 def find_iedm_schema_file_path(path: str) -> str:
     return f"{get_iedm_path()}/idp-artifacts/jsonschema/intuit/iedm/datamap/{path}"
@@ -89,11 +86,10 @@ def get_filename(original_iedm_path: str):
     match = re.search(r"/(\w*).schema.json", original_iedm_path)
     return f"{match.group(1)}.json"
 
+
 def get_iedm_relative_schema_file_path(materialization_config, stream):
     if materialization_config.get("iedm_schema_location_override"):
-        return materialization_config.get(
-            "iedm_schema_location_override"
-        )
+        return materialization_config.get("iedm_schema_location_override")
     else:
         return guess_iedm_schema_file(
             stream.get("level_0"),
@@ -104,9 +100,10 @@ def get_iedm_relative_schema_file_path(materialization_config, stream):
         )
 
 
-
 def get_iedm_json(materialization_config, stream):
-    iedm_schema_file = find_iedm_schema_file_path(get_iedm_relative_schema_file_path(materialization_config, stream))
+    iedm_schema_file = find_iedm_schema_file_path(
+        get_iedm_relative_schema_file_path(materialization_config, stream)
+    )
     return read_json(iedm_schema_file)
 
 
@@ -127,16 +124,15 @@ def collect_table_config(env, swimlane_name, stream, materialization_config, ied
         ),
         "primary_keys": iedm_json["@uniqueIdentifierProperties"],
     }
-    optional_properties = ["create_lookback_window_days", "timestamp_format", "materialization_schedule"]
+    optional_properties = [
+        "create_lookback_window_days",
+        "timestamp_format",
+        "materialization_schedule",
+    ]
     for optional_property in optional_properties:
         if materialization_config.get(optional_property):
-            table_config[optional_property] = (
-                materialization_config.get(optional_property)
-            )
+            table_config[optional_property] = materialization_config.get(optional_property)
     return table_config
-
-
-
 
 
 def airflow_schema_sync():
@@ -168,10 +164,15 @@ def airflow_schema_sync():
                             bigquery_fields = get_bigquery_fields(fields)
 
                             # Write BigQuery Fields
-                            write_bigquery_schema_json_to_airflow_directory(bigquery_fields, get_iedm_relative_schema_file_path(materialization_config, stream))
+                            write_bigquery_schema_json_to_airflow_directory(
+                                bigquery_fields,
+                                get_iedm_relative_schema_file_path(materialization_config, stream),
+                            )
 
                             # Write to the table config
-                            table_config = collect_table_config(env, swimlane_dir.name, stream, materialization_config, iedm_json)
+                            table_config = collect_table_config(
+                                env, swimlane_dir.name, stream, materialization_config, iedm_json
+                            )
                             tables_to_materialize[env].append(table_config)
 
     for env in ("e2e", "prd"):
