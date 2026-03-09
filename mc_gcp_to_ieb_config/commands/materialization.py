@@ -5,7 +5,7 @@ from mc_gcp_to_ieb_config.services.materialization.generate_schema_for_materiali
 
 
 @click.group(name="materialization")
-def airflow_group() -> None:
+def materialization_group() -> None:
     """Commands to manage all materialization configurations."""
     pass
 
@@ -16,4 +16,4 @@ def sync():
     airflow_schema_sync()
 
 
-airflow_group.add_command(sync)
+materialization_group.add_command(sync)
