@@ -367,5 +367,3 @@ class TestSyncConnectorConfigs:
             assert "to_remove" not in result_by_name
         finally:
             os.unlink(temp_path)
-
-
