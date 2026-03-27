@@ -291,6 +291,9 @@ streams:
   level_1: mailchimp
   max_tasks: 1
   schemas_enable: true
+  materialization:
+    enabled: true
+    iedm_schema_location_override: integrationandautomation/mailchimp/entities/EnrichedReview.schema.json
 - name: eligible_reviews_enriched
   kafka_topic: prd-integrationandautomation-mailchimp-eligible-reviews-enriched-v1
   kafka_topic_entity_name: eligible_reviews_enriched
@@ -299,6 +302,9 @@ streams:
   level_1: mailchimp
   max_tasks: 1
   schemas_enable: true
+  materialization:
+    enabled: true
+    iedm_schema_location_override: integrationandautomation/mailchimp/entities/EnrichedEligibleReview.schema.json
 # Acquired segment streams
 - name: acquiredsegmentmembers_enriched
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-acquiredsegmentmembers-enriched-v1
@@ -308,6 +314,9 @@ streams:
   level_1: unifiedcontactprofiles
   max_tasks: 3
   schemas_enable: true
+  materialization:
+    enabled: true
+    iedm_schema_location_override: crmandmarketing/unifiedcontactprofiles/c2profile/entities/EnrichedAcquiredSegmentMembers.schema.json
 - name: acquiredsegment_enriched
   kafka_topic: prd-integrationandautomation-mailchimp-acquiredsegment-enriched-v1
   kafka_topic_entity_name: acquiredsegment_enriched
@@ -316,6 +325,9 @@ streams:
   level_1: mailchimp
   max_tasks: 3
   schemas_enable: true
+  materialization:
+    enabled: true
+    iedm_schema_location_override: integrationandautomation/mailchimp/entities/EnrichedAcquiredSegment.schema.json
 # Ecommerce streams
 - name: backinstockrequest
   kafka_topic: prd-crmandmarketing-ecommerce-backinstockrequest-v1
@@ -325,6 +337,9 @@ streams:
   level_1: ecommerce
   max_tasks: 1
   schemas_enable: true
+  materialization:
+    enabled: true
+    iedm_schema_location_override: crmandmarketing/mailchimp/ecommerce/entities/BackInStockRequest.schema.json
 - name: inventory_update_event
   kafka_topic: prd-crmandmarketing-ecommerce-inventory-update-event-v1
   kafka_topic_entity_name: inventory_update_event
@@ -333,6 +348,9 @@ streams:
   level_1: ecommerce
   max_tasks: 12
   schemas_enable: true
+  materialization:
+    enabled: true
+    iedm_schema_location_override: crmandmarketing/mailchimp/ecommerce/entities/InventoryUpdateEvent.schema.json
 - name: abandoned_product_browse_event
   kafka_topic: prd-crmandmarketing-ecommerce-abandoned-product-browse-event-v1
   kafka_topic_entity_name: abandoned_product_browse_event
@@ -341,6 +359,9 @@ streams:
   level_1: ecommerce
   max_tasks: 3
   schemas_enable: true
+  materialization:
+    enabled: true
+    iedm_schema_location_override: crmandmarketing/mailchimp/ecommerce/entities/AbandonedProductBrowseEvent.schema.json
 - name: abandoned_cart_event
   kafka_topic: prd-crmandmarketing-ecommerce-abandoned-cart-event-v1
   kafka_topic_entity_name: abandoned_cart_event
@@ -349,3 +370,6 @@ streams:
   level_1: ecommerce
   max_tasks: 3
   schemas_enable: true
+  materialization:
+    enabled: true
+    iedm_schema_location_override: crmandmarketing/mailchimp/ecommerce/entities/AbandonedCartEvent.schema.json
