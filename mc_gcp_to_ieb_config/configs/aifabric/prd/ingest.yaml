@@ -8,3 +8,6 @@ streams:
   max_tasks: 3
   schemas_enable: true
   skip_terraform_sync: true  # Legacy module has non-standard name (no level_1, no version)
+  materialization:
+    enabled: true
+    iedm_schema_location_override: aifabric/acquisitionmcaifabric/aiworkfloworchestrationandexperimentation/entities/AISLEBeacon.schema.json
