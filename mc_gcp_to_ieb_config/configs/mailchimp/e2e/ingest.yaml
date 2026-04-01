@@ -31,6 +31,40 @@ streams:
   materialization:
     enabled: true
     iedm_schema_location_override: crmandmarketing/mailchimp/marketingchannelmanagement/entities/TrackingLinkClickWithClient.schema.json
+# DCS discount rule forwarder streams
+- name: dcs-discount-rule
+  kafka_topic: dcs-discount-rule
+  kafka_topic_entity_name: dcs-discount-rule
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: ecommerce
+  max_tasks: 3
+  schemas_enable: false
+  materialization:
+    enabled: true
+    iedm_schema_location_override: crmandmarketing/mailchimp/ecommerce/entities/DcsDiscountRule.schema.json
+- name: dcs-campaign-rule-mapping
+  kafka_topic: dcs-campaign-rule-mapping
+  kafka_topic_entity_name: dcs-campaign-rule-mapping
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: ecommerce
+  max_tasks: 3
+  schemas_enable: false
+  materialization:
+    enabled: true
+    iedm_schema_location_override: crmandmarketing/mailchimp/ecommerce/entities/DcsCampaignRuleMapping.schema.json
+- name: dcs-user-codes
+  kafka_topic: dcs-user-codes
+  kafka_topic_entity_name: dcs-user-codes
+  entity_version: v1
+  level_0: crmandmarketing
+  level_1: ecommerce
+  max_tasks: 3
+  schemas_enable: false
+  materialization:
+    enabled: true
+    iedm_schema_location_override: crmandmarketing/mailchimp/ecommerce/entities/DcsUserCodes.schema.json
 - name: brand-profile-events
   kafka_topic: mailchimp-brand-profile-events
   kafka_topic_entity_name: brand-profile-events
