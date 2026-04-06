@@ -12,6 +12,11 @@ from mc_gcp_to_ieb_config.services.materialization.iedm_to_bigquery import (
 from mc_gcp_to_ieb_config.utils.config import validate_config, get_iedm_path, get_airflow_path
 
 
+def to_snake_case(s: str) -> str:
+    """Convert hyphens and dots to underscores for BigQuery-compatible names."""
+    return s.replace("-", "_").replace(".", "_")
+
+
 def find_iedm_schema_file_path(path: str) -> str:
     return f"{get_iedm_path()}/idp-artifacts/jsonschema/intuit/iedm/datamap/{path}"
 
@@ -117,7 +122,7 @@ def collect_table_config(env, swimlane_name, stream, materialization_config, ied
         stream.get("entity_version"),
     )
     table_config = {
-        "materialized_table_name": stream.get("name"),
+        "materialized_table_name": to_snake_case(stream.get("name")),
         "events_table_id": events_table_id,
         "schema_path": get_relative_airflow_schema_path(
             get_iedm_relative_schema_file_path(materialization_config, stream)

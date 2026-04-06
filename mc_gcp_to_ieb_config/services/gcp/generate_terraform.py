@@ -8,6 +8,11 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 
+def to_snake_case(s: str) -> str:
+    """Convert hyphens and dots to underscores for BigQuery-compatible names."""
+    return s.replace("-", "_").replace(".", "_")
+
+
 def module_exists(file_path: str, module_name: str) -> bool:
     """Check if a Terraform module with the given name exists."""
     try:
@@ -32,11 +37,12 @@ def iam_binding_exists(file_path: str, resource_name: str) -> bool:
 
 def render_terraform(stream, direction: str, swimlane: str, environment: str):
     """Constructing context for Terraform jinja template."""
+    entity_name_snake = to_snake_case(stream["kafka_topic_entity_name"])
     terraform_context = {
         "direction": direction,
         "swimlane": swimlane,
         "environment": environment,
-        "kafka_topic_entity_name": stream["kafka_topic_entity_name"],
+        "kafka_topic_entity_name": entity_name_snake,
         "entity_version": stream["entity_version"],
         "level_0": stream["level_0"],
         "level_1": stream["level_1"],
@@ -55,8 +61,9 @@ def get_pub_sub_topic_name(stream, direction: str, swimlane: str) -> str:
 
 def render_iam_binding(stream, direction: str, swimlane: str, member: str, member_index: int):
     """Constructing context for IAM binding jinja template."""
+    entity_name_snake = to_snake_case(stream["kafka_topic_entity_name"])
     iam_context = {
-        "kafka_topic_entity_name": stream["kafka_topic_entity_name"],
+        "kafka_topic_entity_name": entity_name_snake,
         "entity_version": stream["entity_version"],
         "level_0": stream["level_0"],
         "level_1": stream["level_1"],
@@ -71,6 +78,7 @@ def render_iam_binding(stream, direction: str, swimlane: str, member: str, membe
 def append_config(stream, direction: str, swimlane: str, environment: str) -> dict:
     """Appending new Terrform module blocks to Pantropy. Returns stats dict."""
     config = render_terraform(stream, direction, swimlane, environment)
+    entity_name_snake = to_snake_case(stream["kafka_topic_entity_name"])
 
     terraform_path = get_pantropy_path()
     if environment == "prd":
@@ -78,7 +86,7 @@ def append_config(stream, direction: str, swimlane: str, environment: str) -> di
     else:
         output = terraform_path.format(env="staging")
 
-    module_name = f'{stream["level_0"]}_{stream["level_1"]}_{stream["kafka_topic_entity_name"]}_{stream["entity_version"]}__stream'
+    module_name = f'{stream["level_0"]}_{stream["level_1"]}_{entity_name_snake}_{stream["entity_version"]}__stream'
 
     if module_exists(output, module_name):
         logger.debug(f"Module {module_name} already exists, skipping")
@@ -112,8 +120,9 @@ def append_iam_bindings(stream, direction: str, swimlane: str, environment: str)
 
     iam_path = get_iam_path(environment)
 
+    entity_name_snake = to_snake_case(stream["kafka_topic_entity_name"])
     for idx, member in enumerate(publishers):
-        resource_name = f'{stream["level_0"]}_{stream["level_1"]}_{stream["kafka_topic_entity_name"]}_{stream["entity_version"]}__publisher_{idx}'
+        resource_name = f'{stream["level_0"]}_{stream["level_1"]}_{entity_name_snake}_{stream["entity_version"]}__publisher_{idx}'
 
         if iam_binding_exists(iam_path, resource_name):
             logger.debug(f"IAM binding {resource_name} already exists, skipping")
