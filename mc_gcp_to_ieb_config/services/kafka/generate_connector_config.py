@@ -9,6 +9,11 @@ from mc_gcp_to_ieb_config.utils.config import get_mc_gcp_to_ieb_path, validate_c
 KAFKA_CONNECTORS_FILE = "connectors.yaml"
 
 
+def to_snake_case(s: str) -> str:
+    """Convert hyphens and dots to underscores for BigQuery-compatible names."""
+    return s.replace("-", "_").replace(".", "_")
+
+
 def _truncate_value(value, max_length: int = 50) -> str:
     """Truncate a value for display in logs."""
     if value is None:
@@ -56,9 +61,10 @@ def render_kafka_config(stream, direction: str, swimlane: str):
     """Constructing context for Kafka jinja template."""
     # Sink (ingest) connectors require pub_sub_topic, while Source (publish) connectors require pub_sub_subscription
     is_ingest = direction == "ingest"
+    entity_name_snake = to_snake_case(stream["kafka_topic_entity_name"])
 
     kafka_context = {
-        "kafka_topic_entity_name": stream["kafka_topic_entity_name"],
+        "kafka_topic_entity_name": entity_name_snake,
         "level_0": stream["level_0"],
         "level_1": stream["level_1"],
         "entity_version": stream["entity_version"],
@@ -66,7 +72,7 @@ def render_kafka_config(stream, direction: str, swimlane: str):
         "pub_sub_topic": (
             stream.get(
                 "pub_sub_topic",
-                f"{direction}-{swimlane}-{stream['level_0']}_{stream['level_1']}_{stream['kafka_topic_entity_name']}_{stream['entity_version']}",
+                f"{direction}-{swimlane}-{stream['level_0']}_{stream['level_1']}_{entity_name_snake}_{stream['entity_version']}",
             )
             if is_ingest
             else None
@@ -74,7 +80,7 @@ def render_kafka_config(stream, direction: str, swimlane: str):
         "pub_sub_subscription": (
             stream.get(
                 "pub_sub_subscription",
-                f"{direction}-{swimlane}-{stream['level_0']}_{stream['level_1']}_{stream['kafka_topic_entity_name']}_{stream['entity_version']}-to-kafka",
+                f"{direction}-{swimlane}-{stream['level_0']}_{stream['level_1']}_{entity_name_snake}_{stream['entity_version']}-to-kafka",
             )
             if not is_ingest
             else None
