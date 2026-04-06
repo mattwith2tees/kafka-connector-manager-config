@@ -12,6 +12,28 @@ streams:
   labels:
     intuit-billing-capability: mc-data-understanding
     intuit-billing-service: data-quality
+- name: emailopenevent
+  kafka_topic: e2e.crmandmarketing.marketingandcrmanalytics.emailopen.v3
+  kafka_topic_entity_name: emailopenevent
+  entity_version: v3
+  level_0: crmandmarketing
+  level_1: marketingandcrmanalytics
+  max_tasks: 3
+  schemas_enable: true
+  materialization:
+    enabled: false
+    iedm_schema_location_override: crmandmarketing/mailchimp/marketingandcrmanalytics/entities/EmailOpenEvent.schema.json
+- name: emailclickevent
+  kafka_topic: e2e.crmandmarketing.marketingandcrmanalytics.emailclick.v3
+  kafka_topic_entity_name: emailclickevent
+  entity_version: v3
+  level_0: crmandmarketing
+  level_1: marketingandcrmanalytics
+  max_tasks: 3
+  schemas_enable: true
+  materialization:
+    enabled: false
+    iedm_schema_location_override: crmandmarketing/mailchimp/marketingandcrmanalytics/entities/EmailClickEvent.schema.json
 - name: emailclickwithclient
   kafka_topic: e2e-crmandmarketing-marketingandcrmanalytics-emailclickwithclient-v1
   kafka_topic_entity_name: emailclickwithclient
