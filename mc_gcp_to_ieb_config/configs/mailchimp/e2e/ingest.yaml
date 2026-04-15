@@ -100,8 +100,8 @@ streams:
   kafka_topic: e2e-intuit-customergrowthandengagement-acquisitionmailchimpcapabilities-mailchimpsubscriptionandbilling-basepricingplans-v1
   kafka_topic_entity_name: basepricingplans
   entity_version: v1
-  level_0: customergrowthandengagement
-  level_1: acquisitionmailchimpcapabilities
+  level_0: intuit
+  level_1: customergrowthandengagement
   max_tasks: 3
   schemas_enable: true
   materialization:
@@ -111,8 +111,8 @@ streams:
   kafka_topic: e2e-intuit-customergrowthandengagement-acquisitionmailchimpcapabilities-mailchimpsubscriptionandbilling-pricingplandiscounts-v1
   kafka_topic_entity_name: pricingplandiscounts
   entity_version: v1
-  level_0: customergrowthandengagement
-  level_1: acquisitionmailchimpcapabilities
+  level_0: intuit
+  level_1: customergrowthandengagement
   max_tasks: 3
   schemas_enable: true
   materialization:
