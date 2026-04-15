@@ -164,7 +164,7 @@ def airflow_schema_sync():
                             # Get BigQuery Fields definition
                             iedm_json = get_iedm_json(materialization_config, stream)
                             fields = get_iedm_fields(
-                                iedm_json["properties"], iedm_json["definitions"]
+                                iedm_json["properties"], iedm_json.get("definitions", {})
                             )
                             bigquery_fields = get_bigquery_fields(fields)
 
