@@ -1,0 +1,24 @@
+streams:
+# Subscription and billing streams
+- name: basepricingplans
+  kafka_topic: e2e-intuit-customergrowthandengagement-acquisitionmailchimpcapabilities-mailchimpsubscriptionandbilling-basepricingplans-v1
+  kafka_topic_entity_name: basepricingplans
+  entity_version: v1
+  level_0: intuit
+  level_1: customergrowthandengagement
+  max_tasks: 3
+  schemas_enable: true
+  materialization:
+    enabled: true
+    iedm_schema_location_override: customergrowthandengagement/acquisitionmailchimpcapabilities/mailchimpsubscriptionandbilling/entities/BasePricingPlans.schema.json
+- name: pricingplandiscounts
+  kafka_topic: e2e-intuit-customergrowthandengagement-acquisitionmailchimpcapabilities-mailchimpsubscriptionandbilling-pricingplandiscounts-v1
+  kafka_topic_entity_name: pricingplandiscounts
+  entity_version: v1
+  level_0: intuit
+  level_1: customergrowthandengagement
+  max_tasks: 3
+  schemas_enable: true
+  materialization:
+    enabled: true
+    iedm_schema_location_override: customergrowthandengagement/acquisitionmailchimpcapabilities/mailchimpsubscriptionandbilling/entities/PricingPlanDiscounts.schema.json

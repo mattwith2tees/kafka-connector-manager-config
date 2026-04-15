@@ -7,10 +7,7 @@ streams:
   level_0: crmandmarketing
   level_1: ecommerce
   max_tasks: 3
-  schemas_enable: false
-  materialization:
-    enabled: true
-    iedm_schema_location_override: crmandmarketing/mailchimp/ecommerce/entities/DcsDiscountRule.schema.json
+  schemas_enable: true
 - name: dcs-campaign-rule-mapping
   kafka_topic: dcs-campaign-rule-mapping
   kafka_topic_entity_name: dcs-campaign-rule-mapping
@@ -18,10 +15,7 @@ streams:
   level_0: crmandmarketing
   level_1: ecommerce
   max_tasks: 3
-  schemas_enable: false
-  materialization:
-    enabled: true
-    iedm_schema_location_override: crmandmarketing/mailchimp/ecommerce/entities/DcsCampaignRuleMapping.schema.json
+  schemas_enable: true
 - name: dcs-user-codes
   kafka_topic: dcs-user-codes
   kafka_topic_entity_name: dcs-user-codes
@@ -29,10 +23,7 @@ streams:
   level_0: crmandmarketing
   level_1: ecommerce
   max_tasks: 3
-  schemas_enable: false
-  materialization:
-    enabled: true
-    iedm_schema_location_override: crmandmarketing/mailchimp/ecommerce/entities/DcsUserCodes.schema.json
+  schemas_enable: true
 # c2profile streams - these have legacy Terraform module naming
 - name: acquired_contact
   kafka_topic: prd-crmandmarketing-unifiedcontactprofiles-c2profile-acquired-contact-v1

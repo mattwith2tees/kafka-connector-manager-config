@@ -2,6 +2,7 @@ SWIMLANE_TO_VARIANT = {
     "mailchimp": "msc",
     "gbsg": "gbsc",
     "aifabric": "aifabric",
+    "gtm": "gtm",
 }
 
 
