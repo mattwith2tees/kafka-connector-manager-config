@@ -11,3 +11,11 @@ streams:
   materialization:
     enabled: true
     iedm_schema_location_override: aifabric/acquisitionmcaifabric/aiworkfloworchestrationandexperimentation/entities/AISLEBeacon.schema.json
+- name: builtwithoutclassification
+  kafka_topic: fmp-mc-builtwithout-classification-v1
+  kafka_topic_entity_name: builtwithoutclassification
+  entity_version: v1
+  level_0: aifabric
+  level_1: acquisitionmcaifabric
+  max_tasks: 3
+  schemas_enable: true
